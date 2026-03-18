@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="120" viewBox="0 0 480 120">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#0A61D9"/>
+      <stop offset="1" stop-color="#FF7A00"/>
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="none"/>
+  <g transform="translate(24,16)">
+    <path d="M0 56 C40 0, 120 0, 160 56 S240 112, 320 56" fill="none" stroke="url(#g)" stroke-width="8" stroke-linecap="round"/>
+    <text x="0" y="100" font-family="Playfair Display, serif" font-size="42" fill="#0B1530">Mobifund</text>
+  </g>
+</svg>
