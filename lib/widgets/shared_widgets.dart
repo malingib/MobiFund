@@ -253,20 +253,25 @@ class AppTextField extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          maxLines: maxLines,
-          validator: validator,
-          style: AppTheme.body.copyWith(
-            color: AppTheme.textPrimary,
-            fontWeight: FontWeight.w500,
-          ),
-          decoration: InputDecoration(
-            hintText: hint,
-            prefixIcon: prefixIcon != null
-                ? Icon(prefixIcon, color: AppTheme.primary, size: 20)
-                : null,
+        // `TextFormField` requires a `Material` ancestor. Wrapping it makes
+        // the widget resilient when used inside overlays/bottom sheets.
+        Material(
+          type: MaterialType.transparency,
+          child: TextFormField(
+            controller: controller,
+            keyboardType: keyboardType,
+            maxLines: maxLines,
+            validator: validator,
+            style: AppTheme.body.copyWith(
+              color: AppTheme.textPrimary,
+              fontWeight: FontWeight.w500,
+            ),
+            decoration: InputDecoration(
+              hintText: hint,
+              prefixIcon: prefixIcon != null
+                  ? Icon(prefixIcon, color: AppTheme.primary, size: 20)
+                  : null,
+            ),
           ),
         ),
       ],
