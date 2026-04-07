@@ -248,8 +248,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ? Icons.visibility_outlined
                                 : Icons.visibility_off_outlined,
                           ),
-                          onPressed: () => setState(
-                              () => _obscurePassword = !_obscurePassword),
+                          tooltip: 'Toggle password visibility',
+                          onPressed: () {
+                            AppHaptics.selection();
+                            setState(
+                                () => _obscurePassword = !_obscurePassword);
+                          },
                         ),
                       ),
                       validator: (v) {
