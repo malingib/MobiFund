@@ -323,7 +323,10 @@ class AppDropdown<T> extends StatelessWidget {
               value: value,
               isExpanded: true,
               items: items,
-              onChanged: onChanged,
+              onChanged: (val) {
+                AppHaptics.selection();
+                onChanged(val);
+              },
               icon: const Icon(Icons.keyboard_arrow_down,
                   color: AppTheme.primary),
               style: AppTheme.body.copyWith(
@@ -358,7 +361,10 @@ class QuickActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      onTap: () {
+        AppHaptics.selection();
+        onTap();
+      },
       borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
@@ -449,7 +455,10 @@ class BalanceCard extends StatelessWidget {
               ),
               if (onRefresh != null)
                 InkWell(
-                  onTap: onRefresh,
+                  onTap: () {
+                    AppHaptics.selection();
+                    onRefresh!();
+                  },
                   borderRadius: BorderRadius.circular(20),
                   child: Container(
                     padding: const EdgeInsets.all(8),
@@ -457,10 +466,13 @@ class BalanceCard extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Icon(
-                      Icons.refresh,
-                      color: Colors.white,
-                      size: 18,
+                    child: const Tooltip(
+                      message: 'Refresh',
+                      child: Icon(
+                        Icons.refresh,
+                        color: Colors.white,
+                        size: 18,
+                      ),
                     ),
                   ),
                 ),
