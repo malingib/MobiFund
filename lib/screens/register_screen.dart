@@ -224,8 +224,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
                       ),
-                      onPressed: () =>
-                          setState(() => _obscurePassword = !_obscurePassword),
+                      tooltip:
+                          _obscurePassword ? 'Show password' : 'Hide password',
+                      onPressed: () {
+                        AppHaptics.selection();
+                        setState(() => _obscurePassword = !_obscurePassword);
+                      },
                     ),
                   ),
                   validator: (v) {
@@ -251,8 +255,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
                       ),
-                      onPressed: () =>
-                          setState(() => _obscureConfirm = !_obscureConfirm),
+                      tooltip: _obscureConfirm
+                          ? 'Show confirm password'
+                          : 'Hide confirm password',
+                      onPressed: () {
+                        AppHaptics.selection();
+                        setState(() => _obscureConfirm = !_obscureConfirm);
+                      },
                     ),
                   ),
                   validator: (v) {
@@ -296,13 +305,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 24),
                 Center(
-                  child: GestureDetector(
+                  child: InkWell(
                     onTap: () => Navigator.of(context).pop(),
-                    child: Text(
-                      'Already have an account? Sign In',
-                      style: AppTheme.body.copyWith(
-                        color: AppTheme.primary,
-                        fontWeight: FontWeight.w600,
+                    borderRadius: BorderRadius.circular(8),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      child: Text(
+                        'Already have an account? Sign In',
+                        style: AppTheme.body.copyWith(
+                          color: AppTheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
