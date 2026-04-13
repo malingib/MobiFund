@@ -18,130 +18,235 @@ class _MerryGoRoundScreenState extends State<MerryGoRoundScreen> {
     final state = context.watch<AppState>();
     final cycles = state.merryGoRoundCycles;
     final activeCycles = cycles.where((c) => c.status == 'active').toList();
-    final completedCycles = cycles.where((c) => c.status == 'completed').toList();
+    final completedCycles =
+        cycles.where((c) => c.status == 'completed').toList();
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Create Cycle Button
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () => _showCreateCycleDialog(context),
-              icon: const Icon(Icons.add_circle_outline),
-              label: const Text('Create New Cycle'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+    final totalPool = cycles.fold(0.0, (sum, c) => sum + c.totalPool);
+    final totalDistributed =
+        cycles.fold(0.0, (sum, c) => sum + c.distributedAmount);
+
+    return Scaffold(
+      backgroundColor: AppTheme.bg,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 220,
+            floating: false,
+            pinned: true,
+            backgroundColor: AppTheme.bg,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Container(
+                padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
+                decoration: const BoxDecoration(
+                  gradient: AppTheme.primaryGradient,
                 ),
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 24),
-
-          // Active Cycles
-          if (activeCycles.isNotEmpty) ...[
-            Text(
-              'Active Cycles',
-              style: AppTheme.headline.copyWith(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 12),
-            ...activeCycles.map((cycle) => _cycleCard(context, cycle)),
-            const SizedBox(height: 24),
-          ],
-
-          // Completed Cycles
-          if (completedCycles.isNotEmpty) ...[
-            Text(
-              'Completed Cycles',
-              style: AppTheme.headline.copyWith(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 12),
-            ...completedCycles.map((cycle) => _cycleCard(context, cycle)),
-          ],
-
-          // Empty State
-          if (cycles.isEmpty)
-            const Padding(
-              padding: EdgeInsets.all(48),
-              child: Center(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.autorenew, size: 64, color: AppTheme.textLight),
-                    SizedBox(height: 16),
-                    Text(
-                      'No Merry-Go-Round cycles yet',
+                    const Text(
+                      'Merry-Go-Round',
                       style: TextStyle(
-                        fontSize: 16,
-                        color: AppTheme.textSecondary,
+                        color: Colors.white70,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
-                      'Create a cycle to start rotational savings',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppTheme.textSecondary,
+                      '${cycles.length} Cycles',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 32,
+                        fontWeight: FontWeight.w700,
                       ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${activeCycles.length} active, ${completedCycles.length} completed',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _compactStatCard(
+                            'Total Pool',
+                            formatKes(totalPool),
+                            Icons.savings,
+                            AppTheme.accent,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _compactStatCard(
+                            'Distributed',
+                            formatKes(totalDistributed),
+                            Icons.payments,
+                            AppTheme.success,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _compactStatCard(
+                            'Members',
+                            '${state.members.length}',
+                            Icons.people,
+                            AppTheme.primaryLight,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
             ),
+            actions: [
+              IconButton(
+                icon:
+                    const Icon(Icons.add_circle, color: AppTheme.primaryLight),
+                onPressed: () => _showCreateCycleDialog(context),
+              ),
+            ],
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.all(20),
+            sliver: cycles.isEmpty
+                ? SliverFillRemaining(child: _emptyState())
+                : SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final cycle = cycles[index];
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            bottom: index < cycles.length - 1 ? 12 : 0,
+                          ),
+                          child: _cycleCard(context, cycle, state),
+                        );
+                      },
+                      childCount: cycles.length,
+                    ),
+                  ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _showCreateCycleDialog(context),
+        icon: const Icon(Icons.add),
+        label: const Text('New Cycle'),
+      ),
+    );
+  }
+
+  Widget _compactStatCard(
+      String label, String value, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: Colors.white, size: 16),
+          const SizedBox(height: 6),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 10,
+              color: Colors.white70,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ],
       ),
     );
   }
 
-  Widget _cycleCard(BuildContext context, MerryGoRoundCycle cycle) {
-    final state = context.read<AppState>();
+  Widget _emptyState() {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.autorenew_outlined, size: 64, color: AppTheme.textLight),
+          SizedBox(height: 16),
+          Text(
+            'No Merry-Go-Round cycles yet',
+            style: TextStyle(
+              fontSize: 16,
+              color: AppTheme.textSecondary,
+            ),
+          ),
+          SizedBox(height: 8),
+          Text(
+            'Create a cycle to start rotational savings',
+            style: TextStyle(
+              fontSize: 14,
+              color: AppTheme.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _cycleCard(
+      BuildContext context, MerryGoRoundCycle cycle, AppState state) {
     final isComplete = cycle.status == 'completed';
-    final progress = cycle.totalMembers > 0 
-        ? (cycle.completedRecipients.length / cycle.totalMembers * 100) 
+    final progress = cycle.totalMembers > 0
+        ? (cycle.completedRecipients.length / cycle.totalMembers)
         : 0.0;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppTheme.cardBg,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isComplete ? AppTheme.success : AppTheme.primary,
+          color: isComplete ? AppTheme.success : AppTheme.border,
           width: isComplete ? 2 : 1,
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
+          // Header row
           Row(
             children: [
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  gradient: isComplete 
-                    ? LinearGradient(colors: [AppTheme.success, AppTheme.success.withValues(alpha: 0.7)])
-                    : AppTheme.primaryGradient,
+                  gradient: isComplete
+                      ? LinearGradient(
+                          colors: [
+                            AppTheme.success,
+                            AppTheme.success.withValues(alpha: 0.7),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        )
+                      : AppTheme.primaryGradient,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
-                  Icons.autorenew,
-                  color: Colors.white,
-                  size: 24,
-                ),
+                child:
+                    const Icon(Icons.autorenew, color: Colors.white, size: 22),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,31 +254,38 @@ class _MerryGoRoundScreenState extends State<MerryGoRoundScreen> {
                     Text(
                       cycle.name,
                       style: const TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.w700,
                         color: AppTheme.textPrimary,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     Text(
-                      '${cycle.frequency} • ${cycle.contributionAmount.toStringAsFixed(0)} per member',
+                      '${cycle.frequency} - ${formatKes(cycle.contributionAmount)} per member',
                       style: const TextStyle(
-                        fontSize: 13,
+                        fontSize: 12,
                         color: AppTheme.textSecondary,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
               if (isComplete)
-                const Icon(Icons.check_circle, color: AppTheme.success, size: 28)
+                const Icon(Icons.check_circle,
+                    color: AppTheme.success, size: 26)
               else
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: AppTheme.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: AppTheme.primary.withValues(alpha: 0.3)),
+                    border: Border.all(
+                        color: AppTheme.primary.withValues(alpha: 0.3)),
                   ),
                   child: const Text(
                     'ACTIVE',
@@ -187,26 +299,29 @@ class _MerryGoRoundScreenState extends State<MerryGoRoundScreen> {
             ],
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
-          // Stats
+          // Stats row
           Row(
             children: [
               Expanded(
-                child: _miniStat('Total Pool', formatKes(cycle.totalPool)),
+                child: _miniStat(
+                    'Pool', formatKes(cycle.totalPool), AppTheme.textPrimary),
               ),
               Expanded(
-                child: _miniStat('Distributed', formatKes(cycle.distributedAmount)),
+                child: _miniStat('Paid', formatKes(cycle.distributedAmount),
+                    AppTheme.success),
               ),
               Expanded(
-                child: _miniStat('Remaining', formatKes(cycle.remainingAmount)),
+                child: _miniStat('Left', formatKes(cycle.remainingAmount),
+                    isComplete ? AppTheme.success : AppTheme.warning),
               ),
             ],
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 14),
 
-          // Progress
+          // Progress bar
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -214,51 +329,52 @@ class _MerryGoRoundScreenState extends State<MerryGoRoundScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Progress: ${cycle.completedRecipients.length}/${cycle.totalMembers} members',
+                    '${cycle.completedRecipients.length}/${cycle.totalMembers} members',
                     style: const TextStyle(
-                      fontSize: 13,
+                      fontSize: 12,
                       color: AppTheme.textSecondary,
                     ),
                   ),
                   Text(
-                    '${progress.toStringAsFixed(0)}%',
-                    style: const TextStyle(
-                      fontSize: 13,
+                    '${(progress * 100).toStringAsFixed(0)}%',
+                    style: TextStyle(
+                      fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      color: AppTheme.primary,
+                      color: isComplete ? AppTheme.success : AppTheme.primary,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: LinearProgressIndicator(
-                  value: progress / 100,
+                  value: progress,
                   backgroundColor: AppTheme.border,
                   valueColor: AlwaysStoppedAnimation<Color>(
                     isComplete ? AppTheme.success : AppTheme.primary,
                   ),
-                  minHeight: 8,
+                  minHeight: 6,
                 ),
               ),
             ],
           ),
 
-          const SizedBox(height: 20),
-
-          // Current Recipient
+          // Current recipient
           if (!isComplete && cycle.currentRecipientId != null) ...[
+            const SizedBox(height: 14),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppTheme.primary.withValues(alpha: 0.1),
+                color: AppTheme.primary.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppTheme.primary.withValues(alpha: 0.2)),
+                border:
+                    Border.all(color: AppTheme.primary.withValues(alpha: 0.2)),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.emoji_events, color: AppTheme.primary, size: 24),
+                  const Icon(Icons.emoji_events,
+                      color: AppTheme.primary, size: 22),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -275,10 +391,12 @@ class _MerryGoRoundScreenState extends State<MerryGoRoundScreen> {
                         Text(
                           state.getMemberName(cycle.currentRecipientId!),
                           style: const TextStyle(
-                            fontSize: 15,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: AppTheme.textPrimary,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
@@ -286,50 +404,53 @@ class _MerryGoRoundScreenState extends State<MerryGoRoundScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 12),
           ],
 
-          // Actions
-          if (!isComplete)
+          // Action button
+          if (!isComplete) ...[
+            const SizedBox(height: 14),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () => _advanceCycleDialog(context, cycle),
-                icon: const Icon(Icons.arrow_forward),
-                label: const Text('Advance to Next Member'),
+                icon: const Icon(Icons.arrow_forward, size: 18),
+                label: const Text('Advance Cycle'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.primary,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
               ),
             ),
+          ],
         ],
       ),
     );
   }
 
-  Widget _miniStat(String label, String value) {
+  Widget _miniStat(String label, String value, Color valueColor) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: AppTheme.textPrimary,
-          ),
-        ),
-        const SizedBox(height: 4),
         Text(
           label,
           style: const TextStyle(
             fontSize: 11,
             color: AppTheme.textSecondary,
           ),
-          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: valueColor,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );
@@ -361,7 +482,8 @@ class _MerryGoRoundScreenState extends State<MerryGoRoundScreen> {
                     hintText: 'e.g., Cycle 1 - 2024',
                     border: OutlineInputBorder(),
                   ),
-                  validator: (v) => v == null || v.isEmpty ? 'Name required' : null,
+                  validator: (v) =>
+                      v == null || v.isEmpty ? 'Name required' : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -388,7 +510,8 @@ class _MerryGoRoundScreenState extends State<MerryGoRoundScreen> {
                   ),
                   items: const [
                     DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
-                    DropdownMenuItem(value: 'biweekly', child: Text('Bi-Weekly')),
+                    DropdownMenuItem(
+                        value: 'biweekly', child: Text('Bi-Weekly')),
                     DropdownMenuItem(value: 'monthly', child: Text('Monthly')),
                   ],
                   onChanged: (v) => frequency = v!,

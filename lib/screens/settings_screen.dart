@@ -9,6 +9,9 @@ import 'module_management_screen.dart';
 import 'help_center_screen.dart';
 import 'bug_report_screen.dart';
 import 'billing_tiers_screen.dart';
+import 'privacy_security_screen.dart';
+import 'terms_of_service_screen.dart';
+import 'privacy_policy_screen.dart';
 import '../widgets/shared_widgets.dart';
 import '../services/push_notification_service.dart';
 import '../services/preferences_state.dart';
@@ -83,7 +86,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   iconColor: AppTheme.warning,
                   title: 'Privacy & Security',
                   subtitle: 'Password, biometric login',
-                  onTap: () => _navigateToProfile(context),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const PrivacySecurityScreen(),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -293,8 +300,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   iconColor: AppTheme.success,
                   title: 'Terms of Service',
                   subtitle: 'Read our terms',
-                  onTap: () =>
-                      _showComingSoonDialog(context, 'Terms of Service'),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const TermsOfServiceScreen(),
+                    ),
+                  ),
                 ),
                 const Divider(height: 1),
                 _settingsTile(
@@ -302,7 +312,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   iconColor: AppTheme.accent,
                   title: 'Privacy Policy',
                   subtitle: 'How we protect your data',
-                  onTap: () => _showComingSoonDialog(context, 'Privacy Policy'),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const PrivacyPolicyScreen(),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -432,11 +446,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _themeOption(ctx, 'Light', Icons.light_mode,
-                current == ThemeMode.light, () => prefs.setThemeMode(ThemeMode.light)),
+            _themeOption(
+                ctx,
+                'Light',
+                Icons.light_mode,
+                current == ThemeMode.light,
+                () => prefs.setThemeMode(ThemeMode.light)),
             const SizedBox(height: 8),
-            _themeOption(ctx, 'Dark', Icons.dark_mode,
-                current == ThemeMode.dark, () => prefs.setThemeMode(ThemeMode.dark)),
+            _themeOption(
+                ctx,
+                'Dark',
+                Icons.dark_mode,
+                current == ThemeMode.dark,
+                () => prefs.setThemeMode(ThemeMode.dark)),
             const SizedBox(height: 8),
             _themeOption(
                 ctx,
@@ -823,25 +845,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               backgroundColor: AppTheme.danger,
             ),
             child: const Text('Delete'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showComingSoonDialog(BuildContext context, String feature) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppTheme.bg,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Coming Soon'),
-        content: Text(
-            '$feature is under development and will be available in a future update.'),
-        actions: [
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Got it'),
           ),
         ],
       ),
