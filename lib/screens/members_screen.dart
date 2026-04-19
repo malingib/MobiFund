@@ -217,7 +217,11 @@ class _MembersScreenState extends State<MembersScreen> {
                         Text('New Member', style: AppTheme.headline),
                         IconButton(
                           icon: const Icon(Icons.close),
-                          onPressed: () => setState(() => _showForm = false),
+                          tooltip: 'Close',
+                          onPressed: () {
+                            AppHaptics.selection();
+                            setState(() => _showForm = false);
+                          },
                           color: AppTheme.textLight,
                         ),
                       ],
