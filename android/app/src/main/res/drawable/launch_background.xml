@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Native splash removed - using Flutter splash screen instead -->
+<!-- Black background - Flutter splash will fade in immediately -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
-        <color android:color="#0A61D9" />
+        <color android:color="#000000" />
     </item>
 </layer-list>

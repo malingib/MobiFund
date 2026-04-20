@@ -97,37 +97,14 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _forgotPassword() async {
-    if (_emailCtrl.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Enter your email first to reset password.'),
-          backgroundColor: AppTheme.warning,
-        ),
-      );
-      return;
-    }
-
-    setState(() => _isLoading = true);
-    try {
-      await _supabase.resetPassword(_emailCtrl.text.trim());
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Password reset email sent. Check your inbox.'),
-          backgroundColor: AppTheme.success,
-        ),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Could not send reset email. Please contact support.'),
-          backgroundColor: AppTheme.danger,
-        ),
-      );
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
+    // Show password reset dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => _PasswordResetDialog(
+        supabaseService: _supabase,
+      ),
+    );
   }
 
   String _friendlyAuthError(String message) {
@@ -178,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 32),
               Image.asset(
-                'assets/images/logo_full.png',
+                'assets/images/mobifund_logo.png',
                 height: 50,
                 fit: BoxFit.contain,
               ),
@@ -218,7 +195,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         prefixIcon: Icon(Icons.email_outlined),
                       ),
                       validator: (v) {
-                        if (v == null || v.trim().isEmpty) return 'Email is required';
+                        if (v == null || v.trim().isEmpty) {
+                          return 'Email is required';
+                        }
                         final value = v.trim();
                         final okEmail = RegExp(r'^.+@.+\..+$').hasMatch(value);
                         if (!okEmail) return 'Enter a valid email address';
@@ -344,6 +323,265 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Password Reset Dialog
+/// Guides users through SMS OTP-based password reset
+class _PasswordResetDialog extends StatefulWidget {
+  final SupabaseService supabaseService;
+
+  const _PasswordResetDialog({required this.supabaseService});
+
+  @override
+  State<_PasswordResetDialog> createState() => _PasswordResetDialogState();
+}
+
+class _PasswordResetDialogState extends State<_PasswordResetDialog> {
+  final _phoneCtrl = TextEditingController();
+  final _otpCtrl = TextEditingController();
+  final _newPasswordCtrl = TextEditingController();
+  final _confirmPasswordCtrl = TextEditingController();
+
+  bool _isLoading = false;
+  int _step = 1; // 1: Phone, 2: OTP, 3: New Password
+  String? _errorMsg;
+
+  @override
+  void dispose() {
+    _phoneCtrl.dispose();
+    _otpCtrl.dispose();
+    _newPasswordCtrl.dispose();
+    _confirmPasswordCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _sendOtp() async {
+    if (_phoneCtrl.text.trim().isEmpty) {
+      setState(() => _errorMsg = 'Phone number is required');
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    try {
+      await widget.supabaseService.sendPasswordResetOtp(_phoneCtrl.text.trim());
+      setState(() {
+        _step = 2;
+        _errorMsg = null;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('OTP sent to your phone'),
+            backgroundColor: AppTheme.success,
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() => _errorMsg = 'Failed to send OTP: ${e.toString()}');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _verifyOtp() async {
+    if (_otpCtrl.text.trim().isEmpty) {
+      setState(() => _errorMsg = 'OTP is required');
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    try {
+      final verified = await widget.supabaseService.verifyPasswordResetOtp(
+        _phoneCtrl.text.trim(),
+        _otpCtrl.text.trim(),
+      );
+
+      if (!verified) {
+        setState(() => _errorMsg = 'Invalid OTP or OTP expired');
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+
+      setState(() {
+        _step = 3;
+        _errorMsg = null;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('OTP verified! Set your new password'),
+            backgroundColor: AppTheme.success,
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() => _errorMsg = 'Verification failed: ${e.toString()}');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _resetPassword() async {
+    if (_newPasswordCtrl.text.isEmpty) {
+      setState(() => _errorMsg = 'New password is required');
+      return;
+    }
+    if (_newPasswordCtrl.text.length < 6) {
+      setState(() => _errorMsg = 'Password must be at least 6 characters');
+      return;
+    }
+    if (_newPasswordCtrl.text != _confirmPasswordCtrl.text) {
+      setState(() => _errorMsg = 'Passwords do not match');
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    try {
+      // For now, we can't directly reset password without being logged in
+      // Show contact support message
+      if (mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+              'Contact support with your phone number to complete password reset',
+            ),
+            backgroundColor: AppTheme.warning,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() => _errorMsg = 'Password reset failed: ${e.toString()}');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: AppTheme.bg,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: Text(
+        _step == 1
+            ? 'Reset Password'
+            : _step == 2
+                ? 'Verify OTP'
+                : 'Set New Password',
+        style: AppTheme.headline,
+      ),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (_step == 1) ...[
+              Text(
+                'Enter your phone number to receive a password reset code',
+                style: AppTheme.body.copyWith(color: AppTheme.textSecondary),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _phoneCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Phone Number',
+                  hintText: '0712 345 678',
+                  prefixIcon: Icon(Icons.phone_outlined),
+                ),
+                enabled: !_isLoading,
+              ),
+            ] else if (_step == 2) ...[
+              Text(
+                'Enter the OTP sent to +${_phoneCtrl.text}',
+                style: AppTheme.body.copyWith(color: AppTheme.textSecondary),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _otpCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'OTP Code',
+                  hintText: '123456',
+                  prefixIcon: Icon(Icons.confirmation_number_outlined),
+                ),
+                keyboardType: TextInputType.number,
+                enabled: !_isLoading,
+              ),
+            ] else ...[
+              Text(
+                'Set your new password',
+                style: AppTheme.body.copyWith(color: AppTheme.textSecondary),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _newPasswordCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'New Password',
+                  prefixIcon: Icon(Icons.lock_outline),
+                ),
+                obscureText: true,
+                enabled: !_isLoading,
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _confirmPasswordCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Confirm Password',
+                  prefixIcon: Icon(Icons.lock_outline),
+                ),
+                obscureText: true,
+                enabled: !_isLoading,
+              ),
+            ],
+            if (_errorMsg != null) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppTheme.danger.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  _errorMsg!,
+                  style: const TextStyle(color: AppTheme.danger, fontSize: 13),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: _isLoading ? null : () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: _isLoading
+              ? null
+              : (_step == 1
+                  ? _sendOtp
+                  : _step == 2
+                      ? _verifyOtp
+                      : _resetPassword),
+          child: _isLoading
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                  ),
+                )
+              : Text(
+                  _step == 1
+                      ? 'Send OTP'
+                      : _step == 2
+                          ? 'Verify'
+                          : 'Reset Password',
+                ),
+        ),
+      ],
     );
   }
 }

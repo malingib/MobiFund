@@ -48,3 +48,10 @@ app.*.map.json
 .env
 .env.local
 .env.*.local
+
+# Signing keys (NEVER commit these!)
+*.jks
+*.keystore
+/android/key.properties
+/key.jks
+key.properties
