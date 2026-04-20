@@ -358,7 +358,10 @@ class QuickActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      onTap: () {
+        AppHaptics.light();
+        onTap();
+      },
       borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
@@ -449,7 +452,10 @@ class BalanceCard extends StatelessWidget {
               ),
               if (onRefresh != null)
                 InkWell(
-                  onTap: onRefresh,
+                  onTap: () {
+                    AppHaptics.light();
+                    onRefresh!();
+                  },
                   borderRadius: BorderRadius.circular(20),
                   child: Container(
                     padding: const EdgeInsets.all(8),
@@ -457,10 +463,13 @@ class BalanceCard extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Icon(
-                      Icons.refresh,
-                      color: Colors.white,
-                      size: 18,
+                    child: const Tooltip(
+                      message: 'Refresh balance',
+                      child: Icon(
+                        Icons.refresh,
+                        color: Colors.white,
+                        size: 18,
+                      ),
                     ),
                   ),
                 ),
