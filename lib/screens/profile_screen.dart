@@ -177,8 +177,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             actions: [
               if (!_isEditing)
                 IconButton(
+                  tooltip: 'Edit Profile',
                   icon: const Icon(Icons.edit, color: Colors.white),
-                  onPressed: () => setState(() => _isEditing = true),
+                  onPressed: () {
+                    AppHaptics.selection();
+                    setState(() => _isEditing = true);
+                  },
                 ),
             ],
           ),
