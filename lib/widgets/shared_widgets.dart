@@ -448,19 +448,25 @@ class BalanceCard extends StatelessWidget {
                 ),
               ),
               if (onRefresh != null)
-                InkWell(
-                  onTap: onRefresh,
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Icon(
-                      Icons.refresh,
-                      color: Colors.white,
-                      size: 18,
+                Tooltip(
+                  message: 'Refresh balance',
+                  child: InkWell(
+                    onTap: () {
+                      AppHaptics.light();
+                      onRefresh!();
+                    },
+                    borderRadius: BorderRadius.circular(20),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Icon(
+                        Icons.refresh,
+                        color: Colors.white,
+                        size: 18,
+                      ),
                     ),
                   ),
                 ),
