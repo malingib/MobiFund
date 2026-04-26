@@ -222,13 +222,19 @@ class _LoginScreenState extends State<LoginScreen> {
                         hintText: 'Enter your password',
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
+                          tooltip: _obscurePassword
+                              ? 'Show password'
+                              : 'Hide password',
                           icon: Icon(
                             _obscurePassword
                                 ? Icons.visibility_outlined
                                 : Icons.visibility_off_outlined,
                           ),
-                          onPressed: () => setState(
-                              () => _obscurePassword = !_obscurePassword),
+                          onPressed: () {
+                            AppHaptics.selection();
+                            setState(
+                                () => _obscurePassword = !_obscurePassword);
+                          },
                         ),
                       ),
                       validator: (v) {
@@ -246,7 +252,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
-                        onPressed: _isLoading ? null : _forgotPassword,
+                        onPressed: _isLoading
+                            ? null
+                            : () {
+                                AppHaptics.light();
+                                _forgotPassword();
+                              },
                         child: const Text(
                           'Forgot Password?',
                           style: TextStyle(
@@ -263,7 +274,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: _isLoading ? null : _login,
+                        onPressed: _isLoading
+                            ? null
+                            : () {
+                                AppHaptics.light();
+                                _login();
+                              },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
@@ -302,16 +318,22 @@ class _LoginScreenState extends State<LoginScreen> {
                     "Don't have an account? ",
                     style: AppTheme.body,
                   ),
-                  GestureDetector(
+                  InkWell(
                     onTap: () {
+                      AppHaptics.light();
                       Navigator.of(context).pushNamed('/register');
                     },
-                    child: const Text(
-                      'Sign Up',
-                      style: TextStyle(
-                        color: AppTheme.primary,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
+                    borderRadius: BorderRadius.circular(8),
+                    child: const Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      child: Text(
+                        'Sign Up',
+                        style: TextStyle(
+                          color: AppTheme.primary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   ),
