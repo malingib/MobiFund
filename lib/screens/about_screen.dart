@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../theme/app_theme.dart';
 
@@ -23,10 +22,11 @@ class AboutScreen extends StatelessWidget {
               Center(
                 child: Column(
                   children: [
-                    SvgPicture.asset(
-                      'assets/images/mobifund_logo.svg',
+                    Image.asset(
+                      'assets/images/mobifund_logo.png',
                       width: 200,
                       height: 60,
+                      fit: BoxFit.contain,
                     ),
                     const SizedBox(height: 12),
                     Text(
