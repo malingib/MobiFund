@@ -323,6 +323,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 24),
                 Center(
                   child: InkWell(
+                    onTap: () => Navigator.of(context).pop(),
                     borderRadius: BorderRadius.circular(4),
                     onTap: () {
                       AppHaptics.selection();

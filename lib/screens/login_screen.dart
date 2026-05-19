@@ -323,6 +323,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: AppTheme.body,
                   ),
                   InkWell(
+                    onTap: () => Navigator.of(context).pushNamed('/register'),
+                    borderRadius: BorderRadius.circular(8),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     onTap: () {
                       AppHaptics.light();
                       Navigator.of(context).pushNamed('/register');
