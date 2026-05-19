@@ -363,6 +363,7 @@ class QuickActionButton extends StatelessWidget {
     return InkWell(
       onTap: () {
         AppHaptics.selection();
+        AppHaptics.light();
         onTap();
       },
       borderRadius: BorderRadius.circular(16),
@@ -457,6 +458,7 @@ class BalanceCard extends StatelessWidget {
                 InkWell(
                   onTap: () {
                     AppHaptics.selection();
+                    AppHaptics.light();
                     onRefresh!();
                   },
                   borderRadius: BorderRadius.circular(20),

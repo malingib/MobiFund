@@ -1,3 +1,3 @@
-## 2025-05-15 - [Haptic Feedback & Accessibility]
-**Learning:** Icon-only buttons (e.g., password visibility toggles, refresh buttons) should always include descriptive tooltips for screen readers and provide haptic feedback to confirm the interaction.
-**Action:** Use `AppHaptics.selection()` for lightweight feedback on selections and toggles, and ensure every `IconButton` has a `tooltip` property set.
+## 2026-04-26 - [Interactive Feedback & Accessibility]
+**Learning:** Combining haptic feedback with visual ink splash (InkWell) and tooltips significantly improves the perceived quality and accessibility of auth screens. Use `selection()` for toggles and `light()` for links/buttons. Adding `EdgeInsets.symmetric(horizontal: 12, vertical: 8)` to `InkWell` links ensures adequate touch targets.
+**Action:** Always replace `GestureDetector` links with `InkWell` + padding, and ensure all icon-only toggles have descriptive `tooltip` and haptic feedback.
