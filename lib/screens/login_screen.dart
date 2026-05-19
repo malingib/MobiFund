@@ -222,6 +222,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         hintText: 'Enter your password',
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
+                          tooltip: _obscurePassword ? 'Show password' : 'Hide password',
                           tooltip: _obscurePassword
                               ? 'Show password'
                               : 'Hide password',
@@ -230,6 +231,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ? Icons.visibility_outlined
                                 : Icons.visibility_off_outlined,
                           ),
+                          onPressed: () {
+                            AppHaptics.selection();
+                            setState(() => _obscurePassword = !_obscurePassword);
                           tooltip: _obscurePassword
                               ? 'Show password'
                               : 'Hide password',
