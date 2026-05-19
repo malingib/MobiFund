@@ -219,6 +219,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     hintText: 'Min. 6 characters',
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
+                      tooltip: _obscurePassword
+                          ? 'Show password'
+                          : 'Hide password',
                       tooltip:
                           _obscurePassword ? 'Show password' : 'Hide password',
                       icon: Icon(
@@ -251,6 +254,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     hintText: 'Re-enter password',
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
+                      tooltip: _obscureConfirm
+                          ? 'Show confirm password'
+                          : 'Hide confirm password',
                       tooltip:
                           _obscureConfirm ? 'Show password' : 'Hide password',
                       icon: Icon(
@@ -312,6 +318,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 24),
                 Center(
                   child: InkWell(
+                    borderRadius: BorderRadius.circular(4),
+                    onTap: () {
+                      AppHaptics.selection();
+                      Navigator.of(context).pop();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                     onTap: () {
                       AppHaptics.light();
                       Navigator.of(context).pop();
