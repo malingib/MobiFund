@@ -230,6 +230,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ? Icons.visibility_outlined
                                 : Icons.visibility_off_outlined,
                           ),
+                          tooltip: _obscurePassword
+                              ? 'Show password'
+                              : 'Hide password',
                           tooltip: 'Toggle password visibility',
                           onPressed: () {
                             AppHaptics.selection();
@@ -334,6 +337,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     borderRadius: BorderRadius.circular(8),
                     child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       padding:
                           EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     child: const Padding(

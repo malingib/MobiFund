@@ -1,3 +1,10 @@
+## 2025-05-14 - [Password Visibility Toggles]
+**Learning:** Icon-only buttons (like password visibility toggles) should always include descriptive tooltips and haptic feedback to improve accessibility and user experience.
+**Action:** Always add `tooltip` and call `AppHaptics.selection()` on password toggle `IconButton`s.
+
+## 2025-05-14 - [Authentication Links]
+**Learning:** Using `GestureDetector` for text-based navigation links often lacks adequate touch targets and visual feedback. `InkWell` with generous padding and haptics provides a much better experience.
+**Action:** Use `InkWell` with `EdgeInsets.symmetric(horizontal: 8, vertical: 4)` and `AppHaptics.selection()` for interactive text links.
 ## 2026-04-10 - [Enhanced Auth Accessibility & Feedback]
 **Learning:** Icon-only buttons (like password visibility toggles) lack context for screen readers if tooltips are missing, and interactive text links using `GestureDetector` don't provide the visual or haptic feedback users expect from modern mobile apps.
 **Action:** Always add descriptive tooltips and `AppHaptics` to icon-only buttons, and prefer `InkWell` with adequate padding for text-based navigation links.
