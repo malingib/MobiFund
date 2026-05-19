@@ -1,3 +1,6 @@
+## 2025-05-15 - [Tactile & Accessible Auth]
+**Learning:** Auth screens are the first touchpoint; adding haptics and tooltips to password toggles significantly improves the "feel" and accessibility. Replacing GestureDetector with InkWell for links ensures proper interactive feedback (ripples).
+**Action:** Always prefer InkWell with generous padding over GestureDetector for interactive text links. Always include tooltips for icon-only toggles.
 ## 2024-05-24 - [Micro-UX: Interactive Feedback & Accessibility]
 **Learning:** Icon-only buttons (like password visibility toggles) lack context for accessibility without tooltips. Additionally, using `GestureDetector` for navigation links misses out on standard Material feedback (ink ripples) and haptic engagement, which can be easily provided with `InkWell` and `AppHaptics`.
 **Action:** Always include tooltips for icon buttons and prefer `InkWell` with adequate padding for text-based navigation links to improve tap targets and visual/haptic feedback.

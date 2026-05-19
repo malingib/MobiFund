@@ -333,6 +333,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     borderRadius: BorderRadius.circular(8),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                           horizontal: 12, vertical: 8),
                       child: Text(
                         'Already have an account? Sign In',
