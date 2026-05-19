@@ -117,8 +117,14 @@ class _SuperAdminMpesaScreenState extends State<SuperAdminMpesaScreen> {
                 decoration: InputDecoration(
                   labelText: 'Consumer Secret',
                   suffixIcon: IconButton(
-                    icon: Icon(_obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined),
-                    onPressed: () => setState(() => _obscure = !_obscure),
+                    icon: Icon(_obscure
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined),
+                    tooltip: _obscure ? 'Show secret' : 'Hide secret',
+                    onPressed: () {
+                      AppHaptics.selection();
+                      setState(() => _obscure = !_obscure);
+                    },
                   ),
                 ),
                 validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
@@ -127,8 +133,21 @@ class _SuperAdminMpesaScreenState extends State<SuperAdminMpesaScreen> {
               TextFormField(
                 controller: _passkey,
                 obscureText: _obscure,
-                decoration: const InputDecoration(labelText: 'Passkey'),
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+                decoration: InputDecoration(
+                  labelText: 'Passkey',
+                  suffixIcon: IconButton(
+                    icon: Icon(_obscure
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined),
+                    tooltip: _obscure ? 'Show passkey' : 'Hide passkey',
+                    onPressed: () {
+                      AppHaptics.selection();
+                      setState(() => _obscure = !_obscure);
+                    },
+                  ),
+                ),
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'Required' : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
