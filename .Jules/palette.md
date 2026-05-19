@@ -1,3 +1,6 @@
+## 2025-01-24 - [Accessible Links and Feedback]
+**Learning:** Using `InkWell` instead of `GestureDetector` for text links provides critical visual feedback (ink splash) that informs users their interaction was registered. Adding `AppHaptics.selection()` to these interactions and descriptive tooltips to icon-only buttons significantly improves accessibility for screen readers and touch users.
+**Action:** Always favor `InkWell` for interactive text/links and ensure all icon buttons have context-specific tooltips and haptic feedback.
 ## 2026-04-14 - [Interactive Link Feedback]
 **Learning:** Using `InkWell` instead of `GestureDetector` for text links provides critical visual feedback (material ripple) that helps users confirm their interaction. Adding generous padding (8px horizontal, 4px vertical) significantly improves the touch target for accessibility without bloating the UI.
 **Action:** Always prefer `InkWell` with `borderRadius` and `Padding` over `GestureDetector` for navigation links in Flutter.
