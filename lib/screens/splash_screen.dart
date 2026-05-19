@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../theme/app_theme.dart';
 
@@ -22,34 +21,35 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
 
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
-          parent: _controller,
-          curve: const Interval(0.0, 0.6, curve: Curves.easeIn)),
+        parent: _controller,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeIn),
+      ),
     );
 
     _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
       CurvedAnimation(
-          parent: _controller,
-          curve: const Interval(0.2, 0.8, curve: Curves.elasticOut)),
+        parent: _controller,
+        curve: const Interval(0.2, 0.8, curve: Curves.elasticOut),
+      ),
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-          parent: _controller,
-          curve: const Interval(0.4, 1.0, curve: Curves.easeOut)),
-    );
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0.4, 1.0, curve: Curves.easeOut),
+          ),
+        );
 
     _controller.forward();
 
-    Timer(const Duration(milliseconds: 2200), () {
+    Timer(const Duration(milliseconds: 1800), () {
       _checkAuthAndNavigate();
     });
   }
@@ -80,9 +80,7 @@ class _SplashScreenState extends State<SplashScreen>
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: AppTheme.primaryGradient,
-        ),
+        decoration: const BoxDecoration(gradient: AppTheme.primaryGradient),
         child: Stack(
           children: [
             // Background decorative elements
@@ -137,8 +135,8 @@ class _SplashScreenState extends State<SplashScreen>
                         child: Container(
                           width: size.width * 0.75,
                           padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: SvgPicture.asset(
-                            'assets/images/mobifund_logo.svg',
+                          child: Image.asset(
+                            'assets/images/mobifund_logo.png',
                             fit: BoxFit.contain,
                             width: size.width * 0.75,
                           ),
