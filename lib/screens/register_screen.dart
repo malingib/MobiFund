@@ -226,6 +226,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
                       ),
+                      tooltip: 'Toggle password visibility',
                       onPressed: () {
                         AppHaptics.selection();
                         setState(() => _obscurePassword = !_obscurePassword);
@@ -257,6 +258,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
                       ),
+                      tooltip: 'Toggle password visibility',
                       onPressed: () {
                         AppHaptics.selection();
                         setState(() => _obscureConfirm = !_obscureConfirm);

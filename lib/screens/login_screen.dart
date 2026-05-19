@@ -230,6 +230,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ? Icons.visibility_outlined
                                 : Icons.visibility_off_outlined,
                           ),
+                          tooltip: 'Toggle password visibility',
                           onPressed: () {
                             AppHaptics.selection();
                             setState(
