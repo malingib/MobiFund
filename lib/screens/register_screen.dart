@@ -219,13 +219,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     hintText: 'Min. 6 characters',
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
+                      tooltip:
+                          _obscurePassword ? 'Show password' : 'Hide password',
                       icon: Icon(
                         _obscurePassword
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
                       ),
-                      onPressed: () =>
-                          setState(() => _obscurePassword = !_obscurePassword),
+                      onPressed: () {
+                        AppHaptics.selection();
+                        setState(() => _obscurePassword = !_obscurePassword);
+                      },
                     ),
                   ),
                   validator: (v) {
@@ -246,13 +250,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     hintText: 'Re-enter password',
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
+                      tooltip:
+                          _obscureConfirm ? 'Show password' : 'Hide password',
                       icon: Icon(
                         _obscureConfirm
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
                       ),
-                      onPressed: () =>
-                          setState(() => _obscureConfirm = !_obscureConfirm),
+                      onPressed: () {
+                        AppHaptics.selection();
+                        setState(() => _obscureConfirm = !_obscureConfirm);
+                      },
                     ),
                   ),
                   validator: (v) {
@@ -269,7 +277,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _isLoading ? null : _register,
+                    onPressed: _isLoading
+                        ? null
+                        : () {
+                            AppHaptics.light();
+                            _register();
+                          },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
@@ -296,13 +309,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 24),
                 Center(
-                  child: GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Text(
-                      'Already have an account? Sign In',
-                      style: AppTheme.body.copyWith(
-                        color: AppTheme.primary,
-                        fontWeight: FontWeight.w600,
+                  child: InkWell(
+                    onTap: () {
+                      AppHaptics.light();
+                      Navigator.of(context).pop();
+                    },
+                    borderRadius: BorderRadius.circular(8),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
+                      child: Text(
+                        'Already have an account? Sign In',
+                        style: AppTheme.body.copyWith(
+                          color: AppTheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
