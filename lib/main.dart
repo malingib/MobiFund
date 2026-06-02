@@ -246,6 +246,7 @@ class _MainShellState extends State<MainShell> {
   ) {
     return InkWell(
       onTap: () {
+        AppHaptics.selection();
         Navigator.pop(ctx);
         setState(() => _currentIndex = tabIndex);
       },
@@ -309,10 +310,13 @@ class _MainShellState extends State<MainShell> {
             IconButton(
               icon:
                   const Icon(Icons.apps_outlined, color: AppTheme.textPrimary),
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (_) => const ModuleManagementScreen()),
-              ),
+              onPressed: () {
+                AppHaptics.selection();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (_) => const ModuleManagementScreen()),
+                );
+              },
               tooltip: 'Modules',
             ),
           // Online/offline indicator
@@ -365,21 +369,32 @@ class _MainShellState extends State<MainShell> {
                       ),
                     )
                   : const Icon(Icons.sync, color: AppTheme.primary),
-              onPressed: state.isSyncing ? null : state.syncNow,
+              onPressed: state.isSyncing
+                  ? null
+                  : () {
+                      AppHaptics.selection();
+                      state.syncNow();
+                    },
               tooltip: 'Sync',
             ),
           IconButton(
             icon: const Icon(Icons.info_outline, color: AppTheme.textPrimary),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const AboutScreen()),
-            ),
+            onPressed: () {
+              AppHaptics.selection();
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const AboutScreen()),
+              );
+            },
             tooltip: 'About',
           ),
           if (state.isInSupportMode)
             IconButton(
               icon: const Icon(Icons.exit_to_app, color: AppTheme.warning),
               tooltip: 'Exit support mode (local)',
-              onPressed: () => state.exitSupportMode(),
+              onPressed: () {
+                AppHaptics.selection();
+                state.exitSupportMode();
+              },
             ),
         ],
       ),
