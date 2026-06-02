@@ -132,7 +132,7 @@ class _MembersScreenState extends State<MembersScreen> {
               Expanded(
                 child: _statCard(
                   'Active',
-                  '${state.members.cast<OrgMember>().where((m) => m.id.isNotEmpty && state.getMemberTotal(m.id) > 0).length}',
+                  '${state.members.where((m) => state.getMemberTotal(m.id) > 0).length}',
                   Icons.check_circle,
                   AppTheme.success,
                 ),
@@ -278,11 +278,11 @@ class _MembersScreenState extends State<MembersScreen> {
             child: state.members.isEmpty
                 ? _empty('No members yet')
                 : Column(
-                    children: state.members.cast<OrgMember>().map((m) {
+                    children: state.members.map((m) {
                       final memberId = m.id;
                       final total = state.getMemberTotal(memberId);
                       final contribCount = state.contributions
-                          .where((c) => c.userId == memberId)
+                          .where((c) => c.memberId == memberId)
                           .length;
                       return _memberTile(m, total, contribCount);
                     }).toList(),

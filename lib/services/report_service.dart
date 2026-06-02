@@ -80,8 +80,8 @@ class ReportService {
 
     for (final c in contributions) {
       final memberName = members
-          .firstWhere((m) => m.userId == c.userId,
-              orElse: () => OrgMember(orgId: '', userId: '', name: 'Unknown'))
+          .firstWhere((m) => m.id == c.memberId,
+               orElse: () => OrgMember(orgId: '', userId: c.memberId, name: 'Unknown'))
           .name;
       sheet.appendRow([
         TextCellValue(DateFormat('yyyy-MM-dd').format(c.date)),

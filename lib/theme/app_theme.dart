@@ -23,7 +23,7 @@ class AppTheme {
   static const Color textPrimary = Color(0xFF1F2937);
   static const Color textSecondary = Color(0xFF6B7280);
   static const Color textLight = Color(0xFF9CA3AF);
-  static const Color muted = Color(0xFF9CA3AF); // Same as textLight
+  // Alias for backward compatibility
 
   // Status colors
   static const Color success = Color(0xFF10B981);
@@ -139,6 +139,99 @@ class AppTheme {
           behavior: SnackBarBehavior.floating,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+
+  static ThemeData get darkTheme => ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: const Color(0xFF121212),
+        colorScheme: const ColorScheme.dark(
+          primary: primaryLight,
+          secondary: accent,
+          surface: Color(0xFF1E1E1E),
+          error: danger,
+        ),
+        textTheme: const TextTheme(
+          displayLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.w700),
+          displayMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+          headlineMedium: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+          bodySmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+        ).apply(bodyColor: Colors.white, displayColor: Colors.white),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF1E1E1E),
+          foregroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: false,
+          titleTextStyle: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        cardTheme: CardThemeData(
+          color: const Color(0xFF2C2C2C),
+          elevation: 4,
+          shadowColor: Colors.black54,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Color(0xFF1E1E1E),
+          selectedItemColor: primaryLight,
+          unselectedItemColor: Colors.grey,
+          type: BottomNavigationBarType.fixed,
+          elevation: 8,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: primary,
+            foregroundColor: Colors.white,
+            elevation: 0,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            textStyle: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.3,
+            ),
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: const Color(0xFF2C2C2C),
+          labelStyle: const TextStyle(color: Colors.grey, fontSize: 13),
+          hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: Color(0xFF3A3A3A)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: Color(0xFF3A3A3A)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: primaryLight, width: 2),
+          ),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        ),
+        dividerColor: const Color(0xFF3A3A3A),
+        dividerTheme:
+            const DividerThemeData(color: Color(0xFF3A3A3A), thickness: 1),
+        snackBarTheme: const SnackBarThemeData(
+          backgroundColor: Color(0xFF2C2C2C),
+          contentTextStyle:
+              TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+          ),
         ),
       );
 

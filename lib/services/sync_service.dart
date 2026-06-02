@@ -117,9 +117,23 @@ class SyncService {
       // Pull loans
       final loans = await _supabase.fetchLoans(targetOrgId);
       for (var l in loans) {
-        await LocalDb.insertLoan(l);
+        await LocalDb.insertLoan(l.copyWith(synced: true));
       }
       debugPrint('Sync: Pulled ${loans.length} loans');
+
+      // Pull org members
+      final orgMembers = await _supabase.getOrgMembers(targetOrgId);
+      for (var om in orgMembers) {
+        await LocalDb.insertOrgMember(om.copyWith(synced: true));
+      }
+      debugPrint('Sync: Pulled ${orgMembers.length} org members');
+
+      // Pull activated modules
+      final orgModules = await _supabase.getOrgModules(targetOrgId);
+      for (var om in orgModules) {
+        await LocalDb.insertOrgModule(om.copyWith(synced: true));
+      }
+      debugPrint('Sync: Pulled ${orgModules.length} modules');
 
       debugPrint('Sync: Pull complete');
     } catch (e) {

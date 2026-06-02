@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:sqflite/sqflite.dart';
 import '../models/models.dart';
 import '../models/module_models.dart';
 import 'local_db.dart';
@@ -312,6 +313,17 @@ class AppState extends ChangeNotifier {
       {Map<String, dynamic>? config}) async {
     if (_currentOrg == null) return;
     await LocalDb.activateModule(_currentOrg!.id, moduleType, config: config);
+    if (_isOnline && isAuthenticated) {
+      try {
+        await SupabaseService().activateModule(
+          _currentOrg!.id,
+          moduleType,
+          config: config,
+        );
+      } catch (e) {
+        debugPrint('Failed to sync module activation: $e');
+      }
+    }
     await _loadActivatedModules();
     notifyListeners();
   }
@@ -446,7 +458,15 @@ class AppState extends ChangeNotifier {
       await Future.wait([
         supabase.fetchMembers(orgId).then((members) async {
           _members = members;
-          await Future.wait(members.map((m) => LocalDb.insertMember(m)));
+          if (members.isNotEmpty) {
+            final d = await LocalDb.db;
+            final batch = d.batch();
+            for (final m in members) {
+              batch.insert('members', m.toMap(),
+                  conflictAlgorithm: ConflictAlgorithm.replace);
+            }
+            await batch.commit(noResult: true);
+          }
         }),
         supabase.client
             .from('org_members')
@@ -456,21 +476,52 @@ class AppState extends ChangeNotifier {
             .then((response) async {
           _orgMembers =
               (response as List).map((m) => OrgMember.fromMap(m)).toList();
-          await Future.wait(_orgMembers.map((m) => LocalDb.insertOrgMember(m)));
+          if (_orgMembers.isNotEmpty) {
+            final d = await LocalDb.db;
+            final batch = d.batch();
+            for (final m in _orgMembers) {
+              batch.insert('org_members', m.toMap(),
+                  conflictAlgorithm: ConflictAlgorithm.replace);
+            }
+            await batch.commit(noResult: true);
+          }
           _resolveUserRole(orgId);
         }),
         supabase.fetchContributions(orgId).then((contributions) async {
           _contributions = contributions;
-          await Future.wait(
-              contributions.map((c) => LocalDb.insertContribution(c)));
+          if (contributions.isNotEmpty) {
+            final d = await LocalDb.db;
+            final batch = d.batch();
+            for (final c in contributions) {
+              batch.insert('contributions', c.toMap(),
+                  conflictAlgorithm: ConflictAlgorithm.replace);
+            }
+            await batch.commit(noResult: true);
+          }
         }),
         supabase.fetchExpenses(orgId).then((expenses) async {
           _expenses = expenses;
-          await Future.wait(expenses.map((e) => LocalDb.insertExpense(e)));
+          if (expenses.isNotEmpty) {
+            final d = await LocalDb.db;
+            final batch = d.batch();
+            for (final e in expenses) {
+              batch.insert('expenses', e.toMap(),
+                  conflictAlgorithm: ConflictAlgorithm.replace);
+            }
+            await batch.commit(noResult: true);
+          }
         }),
         supabase.fetchLoans(orgId).then((loans) async {
           _loans = loans;
-          await Future.wait(loans.map((l) => LocalDb.insertLoan(l)));
+          if (loans.isNotEmpty) {
+            final d = await LocalDb.db;
+            final batch = d.batch();
+            for (final l in loans) {
+              batch.insert('loans', l.toMap(),
+                  conflictAlgorithm: ConflictAlgorithm.replace);
+            }
+            await batch.commit(noResult: true);
+          }
         }),
         supabase.client
             .from('loan_repayments')
@@ -480,8 +531,15 @@ class AppState extends ChangeNotifier {
             .then((response) async {
           _loanRepayments =
               (response as List).map((r) => LoanRepayment.fromMap(r)).toList();
-          await Future.wait(
-              _loanRepayments.map((r) => LocalDb.insertLoanRepayment(r)));
+          if (_loanRepayments.isNotEmpty) {
+            final d = await LocalDb.db;
+            final batch = d.batch();
+            for (final r in _loanRepayments) {
+              batch.insert('loan_repayments', r.toMap(),
+                  conflictAlgorithm: ConflictAlgorithm.replace);
+            }
+            await batch.commit(noResult: true);
+          }
         }),
         supabase.client
             .from('merry_go_round_cycles')
@@ -492,8 +550,15 @@ class AppState extends ChangeNotifier {
           _merryGoRoundCycles = (response as List)
               .map((c) => MerryGoRoundCycle.fromMap(c))
               .toList();
-          await Future.wait(_merryGoRoundCycles
-              .map((c) => LocalDb.insertMerryGoRoundCycle(c)));
+          if (_merryGoRoundCycles.isNotEmpty) {
+            final d = await LocalDb.db;
+            final batch = d.batch();
+            for (final c in _merryGoRoundCycles) {
+              batch.insert('merry_go_round_cycles', c.toMap(),
+                  conflictAlgorithm: ConflictAlgorithm.replace);
+            }
+            await batch.commit(noResult: true);
+          }
         }),
         supabase.client
             .from('shares')
@@ -502,7 +567,15 @@ class AppState extends ChangeNotifier {
             .order('purchase_date', ascending: false)
             .then((response) async {
           _shares = (response as List).map((s) => Share.fromMap(s)).toList();
-          await Future.wait(_shares.map((s) => LocalDb.insertShare(s)));
+          if (_shares.isNotEmpty) {
+            final d = await LocalDb.db;
+            final batch = d.batch();
+            for (final s in _shares) {
+              batch.insert('shares', s.toMap(),
+                  conflictAlgorithm: ConflictAlgorithm.replace);
+            }
+            await batch.commit(noResult: true);
+          }
         }),
         supabase.client
             .from('goals')
@@ -511,7 +584,15 @@ class AppState extends ChangeNotifier {
             .order('created_at', ascending: false)
             .then((response) async {
           _goals = (response as List).map((g) => Goal.fromMap(g)).toList();
-          await Future.wait(_goals.map((g) => LocalDb.insertGoal(g)));
+          if (_goals.isNotEmpty) {
+            final d = await LocalDb.db;
+            final batch = d.batch();
+            for (final g in _goals) {
+              batch.insert('goals', g.toMap(),
+                  conflictAlgorithm: ConflictAlgorithm.replace);
+            }
+            await batch.commit(noResult: true);
+          }
         }),
         supabase.client
             .from('goal_contributions')
@@ -522,8 +603,15 @@ class AppState extends ChangeNotifier {
           _goalContributions = (response as List)
               .map((c) => GoalContribution.fromMap(c))
               .toList();
-          await Future.wait(
-              _goalContributions.map((c) => LocalDb.insertGoalContribution(c)));
+          if (_goalContributions.isNotEmpty) {
+            final d = await LocalDb.db;
+            final batch = d.batch();
+            for (final c in _goalContributions) {
+              batch.insert('goal_contributions', c.toMap(),
+                  conflictAlgorithm: ConflictAlgorithm.replace);
+            }
+            await batch.commit(noResult: true);
+          }
         }),
         supabase.client
             .from('welfare_contributions')
@@ -534,8 +622,15 @@ class AppState extends ChangeNotifier {
           _welfareContributions = (response as List)
               .map((c) => WelfareContribution.fromMap(c))
               .toList();
-          await Future.wait(_welfareContributions
-              .map((c) => LocalDb.insertWelfareContribution(c)));
+          if (_welfareContributions.isNotEmpty) {
+            final d = await LocalDb.db;
+            final batch = d.batch();
+            for (final c in _welfareContributions) {
+              batch.insert('welfare_contributions', c.toMap(),
+                  conflictAlgorithm: ConflictAlgorithm.replace);
+            }
+            await batch.commit(noResult: true);
+          }
         }),
       ]);
 
@@ -582,15 +677,6 @@ class AppState extends ChangeNotifier {
       );
       _userRole = me.role;
     } catch (_) {}
-  }
-
-  Future<void> reconcileMpesa(String statementId) async {
-    _isLoading = true;
-    notifyListeners();
-    // Simulate API call to reconciliation microservice
-    await Future.delayed(const Duration(seconds: 3));
-    _isLoading = false;
-    notifyListeners();
   }
 
   bool isFeatureAllowed(String feature) {
@@ -704,13 +790,18 @@ class AppState extends ChangeNotifier {
     try {
       await SyncService.pushUnsynced();
       await SyncService.pullAll(orgId: _currentOrg?.id);
-      // Reload just members, contributions, expenses after sync
+      // Reload data after sync
       if (_currentOrg != null) {
         await _loadMembers(_currentOrg!.id);
+        await _loadOrgMembers(_currentOrg!.id);
         await _loadContributions(_currentOrg!.id);
         await _loadExpenses(_currentOrg!.id);
         await _loadSummary(_currentOrg!.id);
         await _loadLoans(_currentOrg!.id);
+        await _loadMerryGoRoundCycles(_currentOrg!.id);
+        await _loadShares(_currentOrg!.id);
+        await _loadGoals(_currentOrg!.id);
+        await _loadWelfareContributions(_currentOrg!.id);
       }
       _syncStatus = 'Synced ✓';
     } catch (e) {
@@ -783,7 +874,7 @@ class AppState extends ChangeNotifier {
     notifyListeners();
 
     // Send SMS notification
-    final member = _members.firstWhere((m) => m.id == contribution.userId,
+    final member = _members.firstWhere((m) => m.id == contribution.memberId,
         orElse: () => OrgMember(
             orgId: _currentOrg?.id ?? '', userId: '', name: 'Member'));
     if (member.phone != null && _isOnline) {
@@ -964,10 +1055,9 @@ class AppState extends ChangeNotifier {
       final updatedCycle = cycle.copyWith(
         currentPosition: newPosition,
         currentRecipientId: newRecipientId,
-        completedRecipients: [
-          ...cycle.completedRecipients,
-          cycle.currentRecipientId ?? ''
-        ],
+        completedRecipients: cycle.currentRecipientId != null
+            ? [...cycle.completedRecipients, cycle.currentRecipientId!]
+            : cycle.completedRecipients,
       );
       await LocalDb.updateMerryGoRoundCycle(updatedCycle);
 
@@ -1019,7 +1109,10 @@ class AppState extends ChangeNotifier {
     // Update goal raised amount
     final goal = _goals.firstWhere((g) => g.id == contribution.goalId);
     final newRaisedAmount = goal.raisedAmount + contribution.amount;
-    final newContributorCount = goal.contributorCount + 1;
+    final isNewContributor = !_goalContributions.any(
+      (gc) => gc.goalId == contribution.goalId && gc.memberId == contribution.memberId,
+    );
+    final newContributorCount = isNewContributor ? goal.contributorCount + 1 : goal.contributorCount;
 
     String? newStatus = goal.status;
     DateTime? completedAt;
@@ -1090,7 +1183,7 @@ class AppState extends ChangeNotifier {
 
   double getMemberTotal(String memberId) {
     return _contributions
-        .where((c) => c.userId == memberId)
+        .where((c) => c.memberId == memberId)
         .fold(0.0, (s, c) => s + c.amount);
   }
 
@@ -1161,16 +1254,16 @@ class AppState extends ChangeNotifier {
     final contributorTotals = <String, Map<String, dynamic>>{};
 
     for (var c in contributions) {
-      if (!contributorTotals.containsKey(c.userId)) {
-        contributorTotals[c.userId] = {
-          'memberId': c.userId,
-          'name': getMemberName(c.userId),
+      if (!contributorTotals.containsKey(c.memberId)) {
+        contributorTotals[c.memberId] = {
+          'memberId': c.memberId,
+          'name': getMemberName(c.memberId),
           'total': 0.0,
           'count': 0,
         };
       }
-      contributorTotals[c.userId]!['total'] += c.amount;
-      contributorTotals[c.userId]!['count']++;
+      contributorTotals[c.memberId]!['total'] += c.amount;
+      contributorTotals[c.memberId]!['count']++;
     }
 
     final list = contributorTotals.values.toList();
@@ -1192,7 +1285,7 @@ class AppState extends ChangeNotifier {
         'type': 'contribution',
         'date': c.date,
         'amount': c.amount,
-        'label': getMemberName(c.userId),
+        'label': getMemberName(c.memberId),
       });
     }
 

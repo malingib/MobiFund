@@ -646,6 +646,91 @@ CREATE POLICY goals_delete ON goals FOR DELETE USING (
 );
 
 -- ─────────────────────────────────────────
+-- MISSING RLS POLICIES
+-- ─────────────────────────────────────────
+
+-- Loan Repayments: org members can read, admin/treasurer can manage
+CREATE POLICY loan_repayments_select ON loan_repayments FOR SELECT USING (
+    EXISTS (SELECT 1 FROM org_members WHERE org_members.org_id = loan_repayments.org_id AND org_members.user_id = auth.uid())
+);
+CREATE POLICY loan_repayments_insert ON loan_repayments FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM org_members WHERE org_members.org_id = loan_repayments.org_id AND org_members.user_id = auth.uid() AND org_members.role IN ('admin','treasurer') AND org_members.is_active = true)
+);
+CREATE POLICY loan_repayments_update ON loan_repayments FOR UPDATE USING (
+    EXISTS (SELECT 1 FROM org_members WHERE org_members.org_id = loan_repayments.org_id AND org_members.user_id = auth.uid() AND org_members.role IN ('admin','treasurer') AND org_members.is_active = true)
+);
+CREATE POLICY loan_repayments_delete ON loan_repayments FOR DELETE USING (
+    EXISTS (SELECT 1 FROM org_members WHERE org_members.org_id = loan_repayments.org_id AND org_members.user_id = auth.uid() AND org_members.role IN ('admin','treasurer') AND org_members.is_active = true)
+);
+
+-- Merry-Go-Round Cycles: org members can read, admin/treasurer can manage
+CREATE POLICY mgr_cycles_select ON merry_go_round_cycles FOR SELECT USING (
+    EXISTS (SELECT 1 FROM org_members WHERE org_members.org_id = merry_go_round_cycles.org_id AND org_members.user_id = auth.uid())
+);
+CREATE POLICY mgr_cycles_insert ON merry_go_round_cycles FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM org_members WHERE org_members.org_id = merry_go_round_cycles.org_id AND org_members.user_id = auth.uid() AND org_members.role IN ('admin','treasurer') AND org_members.is_active = true)
+);
+CREATE POLICY mgr_cycles_update ON merry_go_round_cycles FOR UPDATE USING (
+    EXISTS (SELECT 1 FROM org_members WHERE org_members.org_id = merry_go_round_cycles.org_id AND org_members.user_id = auth.uid() AND org_members.role IN ('admin','treasurer') AND org_members.is_active = true)
+);
+CREATE POLICY mgr_cycles_delete ON merry_go_round_cycles FOR DELETE USING (
+    EXISTS (SELECT 1 FROM org_members WHERE org_members.org_id = merry_go_round_cycles.org_id AND org_members.user_id = auth.uid() AND org_members.role IN ('admin','treasurer') AND org_members.is_active = true)
+);
+
+-- Goal Contributions: org members can read, admin/treasurer can manage
+CREATE POLICY goal_contributions_select ON goal_contributions FOR SELECT USING (
+    EXISTS (SELECT 1 FROM org_members WHERE org_members.org_id = goal_contributions.org_id AND org_members.user_id = auth.uid())
+);
+CREATE POLICY goal_contributions_insert ON goal_contributions FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM org_members WHERE org_members.org_id = goal_contributions.org_id AND org_members.user_id = auth.uid() AND org_members.role IN ('admin','treasurer') AND org_members.is_active = true)
+);
+CREATE POLICY goal_contributions_update ON goal_contributions FOR UPDATE USING (
+    EXISTS (SELECT 1 FROM org_members WHERE org_members.org_id = goal_contributions.org_id AND org_members.user_id = auth.uid() AND org_members.role IN ('admin','treasurer') AND org_members.is_active = true)
+);
+CREATE POLICY goal_contributions_delete ON goal_contributions FOR DELETE USING (
+    EXISTS (SELECT 1 FROM org_members WHERE org_members.org_id = goal_contributions.org_id AND org_members.user_id = auth.uid() AND org_members.role IN ('admin','treasurer') AND org_members.is_active = true)
+);
+
+-- Welfare Contributions: org members can read, admin/treasurer can manage
+CREATE POLICY welfare_contributions_select ON welfare_contributions FOR SELECT USING (
+    EXISTS (SELECT 1 FROM org_members WHERE org_members.org_id = welfare_contributions.org_id AND org_members.user_id = auth.uid())
+);
+CREATE POLICY welfare_contributions_insert ON welfare_contributions FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM org_members WHERE org_members.org_id = welfare_contributions.org_id AND org_members.user_id = auth.uid() AND org_members.role IN ('admin','treasurer') AND org_members.is_active = true)
+);
+CREATE POLICY welfare_contributions_update ON welfare_contributions FOR UPDATE USING (
+    EXISTS (SELECT 1 FROM org_members WHERE org_members.org_id = welfare_contributions.org_id AND org_members.user_id = auth.uid() AND org_members.role IN ('admin','treasurer') AND org_members.is_active = true)
+);
+CREATE POLICY welfare_contributions_delete ON welfare_contributions FOR DELETE USING (
+    EXISTS (SELECT 1 FROM org_members WHERE org_members.org_id = welfare_contributions.org_id AND org_members.user_id = auth.uid() AND org_members.role IN ('admin','treasurer') AND org_members.is_active = true)
+);
+
+-- Org Modules: org members can read, only admin can manage
+CREATE POLICY org_modules_select ON org_modules FOR SELECT USING (
+    EXISTS (SELECT 1 FROM org_members WHERE org_members.org_id = org_modules.org_id AND org_members.user_id = auth.uid())
+);
+CREATE POLICY org_modules_insert ON org_modules FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM org_members WHERE org_members.org_id = org_modules.org_id AND org_members.user_id = auth.uid() AND org_members.role = 'admin' AND org_members.is_active = true)
+);
+CREATE POLICY org_modules_update ON org_modules FOR UPDATE USING (
+    EXISTS (SELECT 1 FROM org_members WHERE org_members.org_id = org_modules.org_id AND org_members.user_id = auth.uid() AND org_members.role = 'admin' AND org_members.is_active = true)
+);
+CREATE POLICY org_modules_delete ON org_modules FOR DELETE USING (
+    EXISTS (SELECT 1 FROM org_members WHERE org_members.org_id = org_modules.org_id AND org_members.user_id = auth.uid() AND org_members.role = 'admin' AND org_members.is_active = true)
+);
+
+-- SMS Logs: org members can read, system inserts via edge functions
+CREATE POLICY sms_logs_select ON sms_logs FOR SELECT USING (
+    EXISTS (SELECT 1 FROM org_members WHERE org_members.org_id = sms_logs.org_id AND org_members.user_id = auth.uid())
+);
+CREATE POLICY sms_logs_insert ON sms_logs FOR INSERT WITH CHECK (
+    auth.uid() IS NOT NULL
+);
+CREATE POLICY sms_logs_delete ON sms_logs FOR DELETE USING (
+    EXISTS (SELECT 1 FROM org_members WHERE org_members.org_id = sms_logs.org_id AND org_members.user_id = auth.uid() AND org_members.role = 'admin' AND org_members.is_active = true)
+);
+
+-- ─────────────────────────────────────────
 -- INITIAL DATA (Optional - for testing)
 -- ─────────────────────────────────────────
 -- Uncomment to insert test data

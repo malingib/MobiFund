@@ -79,7 +79,7 @@ class _ContributionsScreenState extends State<ContributionsScreen>
     final state = context.read<AppState>();
     final contrib = Contribution(
       orgId: state.currentOrg!.id,
-      userId: _selectedMemberId!,
+      memberId: _selectedMemberId!,
       amount: double.parse(_amountCtrl.text),
       date: _selectedDate,
       note: _noteCtrl.text.trim().isEmpty ? null : _noteCtrl.text.trim(),
@@ -172,7 +172,7 @@ class _ContributionsScreenState extends State<ContributionsScreen>
     final filtered = _filterMemberId == null
         ? state.contributions
         : state.contributions
-            .where((c) => c.userId == _filterMemberId)
+            .where((c) => c.memberId == _filterMemberId)
             .toList();
     final total = filtered.fold(0.0, (s, c) => s + c.amount);
 
@@ -399,7 +399,7 @@ class _ContributionsScreenState extends State<ContributionsScreen>
       itemBuilder: (context, index) {
         final member = state.members[index];
         final memberContributions =
-            state.contributions.where((c) => c.userId == member.id).toList();
+            state.contributions.where((c) => c.memberId == member.id).toList();
         final totalContributed =
             memberContributions.fold(0.0, (sum, c) => sum + c.amount);
 
@@ -653,7 +653,7 @@ class _ContributionsScreenState extends State<ContributionsScreen>
         children: [
           MemberAvatar(
             initials:
-                state.getMemberName(c.userId).substring(0, 1).toUpperCase(),
+                state.getMemberName(c.memberId).substring(0, 1).toUpperCase(),
             size: 44,
             color: AppTheme.success,
           ),
@@ -663,7 +663,7 @@ class _ContributionsScreenState extends State<ContributionsScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  state.getMemberName(c.userId),
+                  state.getMemberName(c.memberId),
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -730,6 +730,6 @@ class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(_SliverTabBarDelegate oldDelegate) {
-    return false;
+    return tabBar != oldDelegate.tabBar;
   }
 }

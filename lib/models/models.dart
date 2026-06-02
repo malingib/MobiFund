@@ -221,7 +221,7 @@ class OrgMember {
         id: m['id'],
         orgId: m['org_id'],
         userId: m['user_id'],
-        name: m['name'],
+        name: (m['name'] as String?) ?? 'Unknown',
         phone: m['phone'] == '' ? null : m['phone'],
         email: m['email'] == '' ? null : m['email'],
         role: UserRoleExtension.fromCode(m['role'] ?? 'member'),
@@ -435,7 +435,7 @@ class OrgModule {
 class Contribution {
   final String id;
   final String orgId; // Multi-tenancy support
-  final String userId;
+  final String memberId;
   final double amount;
   final DateTime date;
   final String? note;
@@ -447,7 +447,7 @@ class Contribution {
   Contribution({
     String? id,
     required this.orgId,
-    required this.userId,
+    required this.memberId,
     required this.amount,
     required this.date,
     this.note,
@@ -461,7 +461,7 @@ class Contribution {
   Map<String, dynamic> toMap() => {
         'id': id,
         'org_id': orgId,
-        'user_id': userId,
+        'member_id': memberId,
         'amount': amount,
         'date': date.toIso8601String().split('T')[0],
         'note': note ?? '',
@@ -474,7 +474,7 @@ class Contribution {
   factory Contribution.fromMap(Map<String, dynamic> m) => Contribution(
         id: m['id'],
         orgId: m['org_id'],
-        userId: m['user_id'],
+        memberId: m['member_id'] ?? m['user_id'],
         amount: (m['amount'] as num).toDouble(),
         date: DateTime.parse(m['date']),
         note: m['note'] == '' ? null : m['note'],
@@ -490,7 +490,7 @@ class Contribution {
   Map<String, dynamic> toSupabase() => {
         'id': id,
         'org_id': orgId,
-        'user_id': userId,
+        'member_id': memberId,
         'amount': amount,
         'date': date.toIso8601String().split('T')[0],
         'note': note,
@@ -502,7 +502,7 @@ class Contribution {
   Contribution copyWith({bool? synced}) => Contribution(
         id: id,
         orgId: orgId,
-        userId: userId,
+        memberId: memberId,
         amount: amount,
         date: date,
         note: note,

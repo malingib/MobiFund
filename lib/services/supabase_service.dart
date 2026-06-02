@@ -49,9 +49,7 @@ class SupabaseService {
         anonKey: supabaseAnonKey,
       );
       _client = Supabase.instance.client;
-      debugPrint('Supabase initialized successfully');
     } catch (e) {
-      debugPrint('Supabase init error: $e');
       rethrow;
     }
   }
@@ -183,12 +181,23 @@ class SupabaseService {
   /// Sends an OTP code to the user's phone for password reset verification
   Future<String> sendPasswordResetOtp(String phone) async {
     final normalized = _normalizePhone(phone);
+    final prefs = await SharedPreferences.getInstance();
+
+    // Rate limiting: check existing unexpired OTP
+    final existingExpiry = prefs.getInt(
+      'password_reset_otp_expiry_$normalized',
+    );
+    if (existingExpiry != null &&
+        DateTime.now().millisecondsSinceEpoch < existingExpiry) {
+      throw Exception(
+        'OTP already sent. Please wait before requesting a new one.',
+      );
+    }
 
     // Generate 6-digit OTP
     final otp = (100000 + DateTime.now().microsecond % 900000).toString();
 
     // Store OTP in preferences temporarily (5 min expiry)
-    final prefs = await SharedPreferences.getInstance();
     await prefs.setString('password_reset_otp_$normalized', otp);
     await prefs.setInt(
       'password_reset_otp_expiry_$normalized',
@@ -232,14 +241,28 @@ class SupabaseService {
       throw Exception('Password reset not verified');
     }
 
-    // Supabase requires re-authentication before password change
-    // Update password via admin API call (needs service role key)
-    // For now, we'll use the updateUser method which requires being authenticated
-    // User will need to be logged out, so they can't use updateUser
-    // Instead, we'll send them a magic link via email fallback
+    // Sign in with phone-derived email and the old password, then update
+    // This works because we use phone@mobifund.local as the auth email
+    // The user must know their current password (or we'd need service_role)
+    // For a true password-reset flow, this requires the service_role key
+    // on the server side. We'll use the admin API approach via edge function.
+    try {
+      await callEdgeFunction(
+        functionName: 'reset-password',
+        body: {
+          'phone': normalized,
+          'new_password': newPassword,
+        },
+      );
 
-    // Fallback: User needs to contact support
-    throw Exception('Please contact support to reset your password with OTP');
+      // Clear OTP data
+      await prefs.remove('password_reset_otp_$normalized');
+      await prefs.remove('password_reset_otp_expiry_$normalized');
+      await prefs.remove('password_reset_verified_$normalized');
+    } catch (e) {
+      debugPrint('Password reset error: $e');
+      rethrow;
+    }
   }
 
   static bool _isTestMode = false;

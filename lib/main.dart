@@ -79,6 +79,7 @@ class ChamaApp extends StatelessWidget {
       title: 'Mobifund',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
+      darkTheme: AppTheme.darkTheme,
       themeMode: prefs.themeMode,
       locale: prefs.locale,
       initialRoute: '/',
@@ -106,9 +107,9 @@ class _MainShellState extends State<MainShell> {
   // Index mapping:
   // 0 = Dashboard
   // 1 = Members
-  // 2 = Center FAB (Quick Actions)
-  // 3 = Expenses
-  // 4 = Settings
+  // 2 = Modules Hub
+  // 3 = Settings
+  // Center FAB opens Quick Actions bottom sheet
   // Profile is accessed from Settings or quick actions
 
   final List<Widget> _screens = const [

@@ -152,7 +152,7 @@ class _MpesaReconScreenState extends State<MpesaReconScreen> {
     // Create contribution locally (and sync if online)
     final contrib = Contribution(
       orgId: orgId,
-      userId: selectedMemberId!,
+      memberId: selectedMemberId!,
       amount: amount,
       date: date,
       note: noteCtrl.text.trim().isEmpty ? null : noteCtrl.text.trim(),

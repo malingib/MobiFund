@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/notification_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/shared_widgets.dart';
@@ -23,13 +24,26 @@ class _BugReportScreenState extends State<BugReportScreen> {
     }
 
     setState(() => _submitting = true);
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
-    
-    if (mounted) {
-      setState(() => _submitting = false);
-      NotificationService().showSuccess(context, 'Report submitted! Thank you.');
-      Navigator.pop(context);
+    try {
+      // Submit bug report to Supabase
+      await Supabase.instance.client.from('bug_reports').insert({
+        'title': _titleCtrl.text.trim(),
+        'description': _descCtrl.text.trim(),
+        'category': _category,
+        'user_agent': 'Mobifund/1.0',
+        'created_at': DateTime.now().toIso8601String(),
+      });
+
+      if (mounted) {
+        setState(() => _submitting = false);
+        NotificationService().showSuccess(context, 'Report submitted! Thank you.');
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _submitting = false);
+        NotificationService().showError(context, 'Failed to submit report: $e');
+      }
     }
   }
 

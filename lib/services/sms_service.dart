@@ -45,7 +45,7 @@ class SmsService {
       final apiKey = _apiKey ?? _defaultApiKey;
       final sid = senderId ?? _senderId ?? _defaultSenderId;
 
-      if (apiKey.contains('YOUR_')) {
+      if (apiKey.isEmpty || apiKey.length < 10) {
         return SmsResult(
           success: false,
           message:
@@ -115,7 +115,7 @@ class SmsService {
       final apiKey = _apiKey ?? _defaultApiKey;
       final sid = senderId ?? _senderId ?? _defaultSenderId;
 
-      if (apiKey.contains('YOUR_')) {
+      if (apiKey.isEmpty || apiKey.length < 10) {
         return SmsResult(
           success: false,
           message:
@@ -185,7 +185,7 @@ class SmsService {
       final apiKey = _apiKey ?? _defaultApiKey;
       final sid = senderId ?? _senderId ?? _defaultSenderId;
 
-      if (apiKey.contains('YOUR_')) {
+      if (apiKey.isEmpty || apiKey.length < 10) {
         return SmsResult(
           success: false,
           message:
@@ -250,7 +250,7 @@ class SmsService {
       final apiKey = _apiKey ?? _defaultApiKey;
       final sid = senderId ?? _senderId ?? _defaultSenderId;
 
-      if (apiKey.contains('YOUR_')) {
+      if (apiKey.isEmpty || apiKey.length < 10) {
         return SmsResult(
           success: false,
           message:
@@ -304,7 +304,7 @@ class SmsService {
     try {
       await _ensureLoaded();
       final apiKey = _apiKey ?? _defaultApiKey;
-      if (apiKey.contains('YOUR_')) {
+      if (apiKey.isEmpty || apiKey.length < 10) {
         return SmsStatusResult(
           success: false,
           status: 'error',

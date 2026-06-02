@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/module_models.dart';
 import '../services/app_state.dart';
-import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/shared_widgets.dart';
 
@@ -14,7 +13,6 @@ class WelfareScreen extends StatefulWidget {
 }
 
 class _WelfareScreenState extends State<WelfareScreen> {
-  final SupabaseService _supabase = SupabaseService();
   bool _isSyncing = false;
 
   Future<void> _syncData() async {
@@ -22,23 +20,15 @@ class _WelfareScreenState extends State<WelfareScreen> {
     final state = context.read<AppState>();
 
     try {
-      await _supabase.syncExpenses([]);
-
-      if (_supabase.isLoggedIn && state.currentOrg != null) {
-        final welfareData = await _supabase.client
-            .from('welfare_contributions')
-            .select()
-            .eq('org_id', state.currentOrg!.id)
-            .order('date', ascending: false);
-
-        debugPrint('Fetched welfare data: ${welfareData.length} records');
+      if (state.isOnline && state.currentOrg != null) {
+        await state.syncNow();
       }
 
       if (mounted) {
         AppHaptics.success();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Synced with Supabase'),
+            content: Text('Data synced successfully'),
             backgroundColor: AppTheme.success,
           ),
         );
@@ -82,7 +72,6 @@ class _WelfareScreenState extends State<WelfareScreen> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              initialValue: null,
               decoration: const InputDecoration(
                   labelText: 'Beneficiary (optional)',
                   border: OutlineInputBorder()),

@@ -16,7 +16,7 @@ class LocalDb {
     final dbPath = await getDatabasesPath();
     return openDatabase(
       join(dbPath, 'chama_tracker.db'),
-      version: 5,
+      version: 6,
       onCreate: (db, version) async {
         await _createAllTables(db);
       },
@@ -32,6 +32,9 @@ class LocalDb {
         }
         if (oldVersion < 5) {
           await _migrateToV5(db);
+        }
+        if (oldVersion < 6) {
+          await _migrateToV6(db);
         }
       },
     );
@@ -463,6 +466,37 @@ class LocalDb {
     } catch (_) {}
   }
 
+  static Future<void> _migrateToV6(Database db) async {
+    try {
+      await db.execute(
+          'ALTER TABLE organizations ADD COLUMN updated_at TEXT');
+    } catch (_) {}
+    try {
+      await db.execute(
+          'ALTER TABLE members ADD COLUMN updated_at TEXT');
+    } catch (_) {}
+    try {
+      await db.execute(
+          'ALTER TABLE contributions ADD COLUMN updated_at TEXT');
+    } catch (_) {}
+    try {
+      await db.execute(
+          'ALTER TABLE expenses ADD COLUMN updated_at TEXT');
+    } catch (_) {}
+    try {
+      await db.execute(
+          'ALTER TABLE loans ADD COLUMN updated_at TEXT');
+    } catch (_) {}
+    try {
+      await db.execute(
+          'ALTER TABLE org_members ADD COLUMN updated_at TEXT');
+    } catch (_) {}
+    try {
+      await db.execute(
+          'ALTER TABLE org_modules ADD COLUMN updated_at TEXT');
+    } catch (_) {}
+  }
+
   static Future<void> _migrateToV2(Database db) async {
     // Create new tables for multi-tenancy
     await db.execute('''
@@ -712,6 +746,16 @@ class LocalDb {
     final d = await db;
     await d.insert('contributions', c.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  static Future<void> insertContributions(List<Contribution> contributions) async {
+    final d = await db;
+    final batch = d.batch();
+    for (final c in contributions) {
+      batch.insert('contributions', c.toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+    }
+    await batch.commit(noResult: true);
   }
 
   static Future<List<Contribution>> getContributions(

@@ -127,9 +127,9 @@ class Loan {
     String? id,
     required this.orgId,
     required this.memberId,
-    required LoanType loanType,
+    required this.loanType,
     required this.principal,
-    this.interestRate = 0,
+    double? interestRate,
     double? interestAmount,
     double? totalAmount,
     this.repaymentPeriodMonths = 1,
@@ -146,16 +146,14 @@ class Loan {
     this.completedDate,
     this.notes,
     this.synced = false,
-  })  : id = id ?? _uuid.v4(),
+  })  : interestRate = (loanType == LoanType.softLoan ? 0 : (interestRate ?? 0)),
+        id = id ?? _uuid.v4(),
         applicationDate = applicationDate ?? DateTime.now(),
-        interestAmount = interestAmount ?? (principal * interestRate / 100),
-        totalAmount = totalAmount ?? (principal + (principal * interestRate / 100)),
-        monthlyInstallment = monthlyInstallment ?? ((principal + (principal * interestRate / 100)) / repaymentPeriodMonths),
-        balance = balance ?? (principal + (principal * interestRate / 100)),
-        dueDate = dueDate ?? _calculateDueDate(applicationDate ?? DateTime.now(), repaymentPeriodMonths),
-        loanType = loanType == LoanType.softLoan 
-            ? (interestRate == 0 ? loanType : LoanType.softLoan) // Soft loans have 0 interest
-            : loanType;
+        interestAmount = interestAmount ?? (principal * (loanType == LoanType.softLoan ? 0 : (interestRate ?? 0)) / 100),
+        totalAmount = totalAmount ?? (principal + (principal * (loanType == LoanType.softLoan ? 0 : (interestRate ?? 0)) / 100)),
+        monthlyInstallment = monthlyInstallment ?? ((principal + (principal * (loanType == LoanType.softLoan ? 0 : (interestRate ?? 0)) / 100)) / repaymentPeriodMonths),
+        balance = balance ?? (principal + (principal * (loanType == LoanType.softLoan ? 0 : (interestRate ?? 0)) / 100)),
+        dueDate = dueDate ?? _calculateDueDate(applicationDate ?? DateTime.now(), repaymentPeriodMonths);
 
   static DateTime _calculateDueDate(DateTime start, int months) {
     final month = start.month - 1 + months;

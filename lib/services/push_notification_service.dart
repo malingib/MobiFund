@@ -1,46 +1,35 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-/// Push Notification Service Boilerplate
-/// Uses Supabase backend to store device tokens to route messages.
-/// 
-/// Note: To fully run this, you must configure 'firebase_messaging' and OneSignal/Firebase
-/// at the native Android/iOS app level (google-services.json / GoogleService-Info.plist).
+/// Push Notification Service
+/// Stores device tokens to enable push notifications.
+/// Requires Firebase Cloud Messaging configuration at native level.
 class PushNotificationService {
   final SupabaseClient _supabase = Supabase.instance.client;
 
-  /// Call this when the user logs in or enables notifications
+  /// Register device token for push notifications
   Future<void> registerDeviceToken() async {
     try {
-      if (kIsWeb) return; // Push tokens differ largely on web; usually service worker based.
+      if (kIsWeb) return;
 
-      // 1. In a real environment, you'd request permission first:
-      // final messaging = FirebaseMessaging.instance;
-      // await messaging.requestPermission();
-      
-      // 2. Fetch the device token from APNS or FCM:
-      // final token = await messaging.getToken();
-      
-      const dummyToken = "fcm-token-xyz-123"; 
-
-      // 3. Store in Supabase against the currentUser
       final user = _supabase.auth.currentUser;
       if (user == null) return;
 
-      await _supabase.from('user_devices').upsert({
-        'user_id': user.id,
-        'fcm_token': dummyToken,
-        'platform': defaultTargetPlatform.name,
-        'last_active': DateTime.now().toIso8601String(),
-      });
-      
-      debugPrint("📱 Device token securely registered.");
+      // In production, use FirebaseMessaging to get the real token:
+      // final messaging = FirebaseMessaging.instance;
+      // await messaging.requestPermission();
+      // final token = await messaging.getToken();
+      // 
+      // For now, token registration requires Firebase setup at native level.
+      // See: https://firebase.flutter.dev/docs/messaging/overview
+
+      debugPrint("Push notification registration requires Firebase setup");
     } catch (e) {
       debugPrint("Push Notification Registration Error: $e");
     }
   }
 
-  /// Remove device token on logout or user disabling logic
+  /// Remove device token on logout
   Future<void> removeDeviceToken() async {
      try {
        final user = _supabase.auth.currentUser;
@@ -50,19 +39,14 @@ class PushNotificationService {
            .from('user_devices')
            .delete()
            .eq('user_id', user.id);
-       debugPrint("🔕 Device token removed.");
+       debugPrint("Device token removed");
      } catch (e) {
         debugPrint("Push Notification Deletion Error: $e");
      }
   }
 
-  /// Handle incoming foreground messages and parse routing
+  /// Initialize foreground message listeners
   void initializeListeners() {
-    // Boilerplate for foreground processing using Firebase
-    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    //   if (message.notification != null) {
-    //     debugPrint('Message also contained a notification: ${message.notification}');
-    //   }
-    // });
+    // Requires FirebaseMessaging setup
   }
 }

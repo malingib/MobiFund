@@ -24,7 +24,7 @@ class MemberDetailScreen extends StatelessWidget {
     );
 
     final contributions =
-        state.contributions.where((c) => c.userId == memberId).toList();
+        state.contributions.where((c) => c.memberId == memberId).toList();
     final totalContributed =
         contributions.fold(0.0, (sum, c) => sum + c.amount);
 

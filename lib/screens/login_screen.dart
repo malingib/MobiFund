@@ -17,7 +17,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
 
-  // Focus nodes for proper IME management - prevents focus loop crashes
   final _emailFocus = FocusNode();
   final _passwordFocus = FocusNode();
 
@@ -29,31 +28,14 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    // Add focus listeners for debugging IME issues
-    _emailFocus.addListener(_onEmailFocusChange);
-    _passwordFocus.addListener(_onPasswordFocusChange);
-    debugPrint('[LoginScreen] Initialized - focus nodes created');
-  }
-
-  void _onEmailFocusChange() {
-    debugPrint('[LoginScreen] Email focus changed: ${_emailFocus.hasFocus}');
-  }
-
-  void _onPasswordFocusChange() {
-    debugPrint(
-        '[LoginScreen] Password focus changed: ${_passwordFocus.hasFocus}');
   }
 
   @override
   void dispose() {
-    // Remove listeners and dispose focus nodes
-    _emailFocus.removeListener(_onEmailFocusChange);
-    _passwordFocus.removeListener(_onPasswordFocusChange);
     _emailFocus.dispose();
     _passwordFocus.dispose();
     _emailCtrl.dispose();
     _passwordCtrl.dispose();
-    debugPrint('[LoginScreen] Disposed - focus nodes cleaned up');
     super.dispose();
   }
 
@@ -180,8 +162,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: _emailCtrl,
                       focusNode:
                           _emailFocus, // Explicit focus node prevents IME loop
-                      keyboardType: TextInputType.emailAddress,
-                      autofillHints: const [AutofillHints.email],
+                      keyboardType: TextInputType.text,
+                      autofillHints: const [AutofillHints.telephoneNumber, AutofillHints.email],
                       textCapitalization: TextCapitalization.none,
                       autocorrect: false,
                       textInputAction: TextInputAction.next,
@@ -190,17 +172,20 @@ class _LoginScreenState extends State<LoginScreen> {
                         _passwordFocus.requestFocus();
                       },
                       decoration: const InputDecoration(
-                        labelText: 'Email',
-                        hintText: 'name@example.com',
-                        prefixIcon: Icon(Icons.email_outlined),
+                        labelText: 'Phone or Email',
+                        hintText: '0712 345 678 or name@example.com',
+                        prefixIcon: Icon(Icons.person_outline),
                       ),
                       validator: (v) {
                         if (v == null || v.trim().isEmpty) {
-                          return 'Email is required';
+                          return 'Phone or email is required';
                         }
                         final value = v.trim();
-                        final okEmail = RegExp(r'^.+@.+\..+$').hasMatch(value);
-                        if (!okEmail) return 'Enter a valid email address';
+                        if (value.contains('@')) {
+                          if (!RegExp(r'^.+@.+\..+$').hasMatch(value)) {
+                            return 'Enter a valid email address';
+                          }
+                        }
                         return null;
                       },
                     ),
