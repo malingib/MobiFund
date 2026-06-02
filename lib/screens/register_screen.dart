@@ -222,20 +222,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       tooltip: _obscurePassword
                           ? 'Show password'
                           : 'Hide password',
-                      tooltip: _obscurePassword ? 'Show password' : 'Hide password',
-                      tooltip: _obscurePassword
-                          ? 'Show password'
-                          : 'Hide password',
-                      tooltip:
-                          _obscurePassword ? 'Show password' : 'Hide password',
                       icon: Icon(
                         _obscurePassword
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
                       ),
-                      tooltip:
-                          _obscurePassword ? 'Show password' : 'Hide password',
-                      tooltip: 'Toggle password visibility',
                       onPressed: () {
                         AppHaptics.selection();
                         setState(() => _obscurePassword = !_obscurePassword);
@@ -263,21 +254,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       tooltip: _obscureConfirm
                           ? 'Show confirm password'
                           : 'Hide confirm password',
-                      tooltip: _obscureConfirm ? 'Show confirm password' : 'Hide confirm password',
-                      tooltip: _obscureConfirm
-                          ? 'Show confirm password'
-                          : 'Hide confirm password',
-                      tooltip:
-                          _obscureConfirm ? 'Show password' : 'Hide password',
                       icon: Icon(
                         _obscureConfirm
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
                       ),
-                      tooltip: _obscureConfirm
-                          ? 'Show confirm password'
-                          : 'Hide confirm password',
-                      tooltip: 'Toggle password visibility',
                       onPressed: () {
                         AppHaptics.selection();
                         setState(() => _obscureConfirm = !_obscureConfirm);
@@ -331,27 +312,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 24),
                 Center(
                   child: InkWell(
-                    onTap: () => Navigator.of(context).pop(),
-                    borderRadius: BorderRadius.circular(4),
-                    onTap: () {
-                      AppHaptics.selection();
-                      Navigator.of(context).pop();
-                    },
-                    borderRadius: BorderRadius.circular(8),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
                     onTap: () {
                       AppHaptics.light();
                       Navigator.of(context).pop();
                     },
                     borderRadius: BorderRadius.circular(8),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                          horizontal: 12, vertical: 8),
+                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       child: Text(
                         'Already have an account? Sign In',
                         style: AppTheme.body.copyWith(

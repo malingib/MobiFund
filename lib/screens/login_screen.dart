@@ -321,27 +321,27 @@ class _LoginScreenState extends State<LoginScreen> {
                       Navigator.of(context).pushNamed('/register');
                     },
                     borderRadius: BorderRadius.circular(8),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     borderRadius: BorderRadius.circular(4),
                     onTap: () {
                       AppHaptics.selection();
                       Navigator.of(context).pushNamed('/register');
                     },
                     borderRadius: BorderRadius.circular(8),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    child: Padding(
+                      padding: const const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       padding:
-                          EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    child: const Padding(
+                          const const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    child: Padding(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          const const const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     onTap: () {
                       AppHaptics.light();
                       Navigator.of(context).pushNamed('/register');
                     },
                     borderRadius: BorderRadius.circular(8),
-                    child: const Padding(
+                    child: Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       child: Text(
