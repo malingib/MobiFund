@@ -207,7 +207,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         hintText: 'Enter your password',
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
-                          tooltip: _obscurePassword ? 'Show password' : 'Hide password',
                           tooltip: _obscurePassword
                               ? 'Show password'
                               : 'Hide password',
@@ -219,14 +218,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: () {
                             AppHaptics.selection();
                             setState(() => _obscurePassword = !_obscurePassword);
-                          tooltip: _obscurePassword
-                              ? 'Show password'
-                              : 'Hide password',
-                          tooltip: 'Toggle password visibility',
-                          onPressed: () {
-                            AppHaptics.selection();
-                            setState(
-                                () => _obscurePassword = !_obscurePassword);
                           },
                         ),
                       ),
@@ -312,38 +303,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: AppTheme.body,
                   ),
                   InkWell(
-                    onTap: () => Navigator.of(context).pushNamed('/register'),
+                    onTap: () {
+                      AppHaptics.light();
+                      Navigator.of(context).pushNamed('/register');
+                    },
                     borderRadius: BorderRadius.circular(8),
                     child: const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    onTap: () {
-                      AppHaptics.light();
-                      Navigator.of(context).pushNamed('/register');
-                    },
-                    borderRadius: BorderRadius.circular(8),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    borderRadius: BorderRadius.circular(4),
-                    onTap: () {
-                      AppHaptics.selection();
-                      Navigator.of(context).pushNamed('/register');
-                    },
-                    borderRadius: BorderRadius.circular(8),
-                    child: Padding(
-                      padding: const const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      padding:
-                          const const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    child: Padding(
-                      padding:
-                          const const const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    onTap: () {
-                      AppHaptics.light();
-                      Navigator.of(context).pushNamed('/register');
-                    },
-                    borderRadius: BorderRadius.circular(8),
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       child: Text(
                         'Sign Up',
                         style: TextStyle(
