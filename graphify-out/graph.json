@@ -431,9 +431,9 @@
       "file_type": "rationale",
       "source_file": "ios/Flutter/ephemeral/flutter_lldb_helper.py",
       "source_location": "L8",
-      "id": "ephemeral_flutter_lldb_helper_rationale_8",
       "community": 29,
-      "norm_label": "intercept notify_debugger_about_rx_pages and touch the pages."
+      "norm_label": "intercept notify_debugger_about_rx_pages and touch the pages.",
+      "id": "ephemeral_flutter_lldb_helper_rationale_8"
     },
     {
       "label": "index.ts",
@@ -7287,8 +7287,8 @@
       "source_file": "windows/runner/flutter_window.cpp",
       "source_location": "L28",
       "weight": 1.0,
-      "_src": "runner_flutter_window_oncreate",
-      "_tgt": "runner_win32_window_setchildcontent",
+      "_src": "runner_win32_window_setchildcontent",
+      "_tgt": "runner_flutter_window_oncreate",
       "source": "runner_win32_window_setchildcontent",
       "target": "runner_flutter_window_oncreate"
     },
@@ -7299,8 +7299,8 @@
       "source_file": "windows/runner/flutter_window.cpp",
       "source_location": "L17",
       "weight": 1.0,
-      "_src": "runner_flutter_window_oncreate",
-      "_tgt": "runner_win32_window_getclientarea",
+      "_src": "runner_win32_window_getclientarea",
+      "_tgt": "runner_flutter_window_oncreate",
       "source": "runner_win32_window_getclientarea",
       "target": "runner_flutter_window_oncreate"
     },

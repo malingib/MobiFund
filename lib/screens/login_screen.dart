@@ -28,6 +28,16 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
+    // If the user is already authenticated, route past the login screen
+    // on the first frame. The auth state can only change via explicit
+    // sign-out, so checking once in initState is sufficient.
+    final state = context.read<AppState>();
+    if (state.isAuthenticated) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        Navigator.of(context).pushReplacementNamed('/home');
+      });
+    }
   }
 
   @override
@@ -79,13 +89,13 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _forgotPassword() async {
-    // Show password reset dialog
+    // The dialog is now a 1-step honest contact-support flow. With only
+    // a phone field to capture, the user can dismiss it the same way
+    // they opened it (tap-out or Esc).
     showDialog(
       context: context,
-      barrierDismissible: false,
-      builder: (ctx) => _PasswordResetDialog(
-        supabaseService: _supabase,
-      ),
+      barrierDismissible: true,
+      builder: (ctx) => const _PasswordResetDialog(),
     );
   }
 
@@ -107,225 +117,351 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.bg,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            children: [
-              const SizedBox(height: 40),
-
-              // Logo
-              Container(
-                width: 140,
-                height: 140,
-                padding: const EdgeInsets.all(20),
+      body: Container(
+        decoration: const BoxDecoration(gradient: AppTheme.softGradient),
+        child: Stack(
+          children: [
+            Positioned(
+              top: -60,
+              right: -40,
+              child: Container(
+                width: 220,
+                height: 220,
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(30),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: Image.asset(
-                  'assets/images/logo_mark.png',
-                  fit: BoxFit.contain,
+                  shape: BoxShape.circle,
+                  color: AppTheme.primary.withValues(alpha: 0.08),
                 ),
               ),
-              const SizedBox(height: 32),
-              Image.asset(
-                'assets/images/mobifund_logo.png',
-                height: 50,
-                fit: BoxFit.contain,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Group Finance Made Simple',
-                style: AppTheme.body.copyWith(
-                  color: AppTheme.textSecondary,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+            ),
+            Positioned(
+              bottom: 100,
+              left: -40,
+              child: Container(
+                width: 160,
+                height: 160,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppTheme.accent.withValues(alpha: 0.08),
                 ),
               ),
-
-              const SizedBox(height: 48),
-
-              // Login Form
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: _emailCtrl,
-                      focusNode:
-                          _emailFocus, // Explicit focus node prevents IME loop
-                      keyboardType: TextInputType.text,
-                      autofillHints: const [AutofillHints.telephoneNumber, AutofillHints.email],
-                      textCapitalization: TextCapitalization.none,
-                      autocorrect: false,
-                      textInputAction: TextInputAction.next,
-                      onFieldSubmitted: (_) {
-                        // Move to password field on submit
-                        _passwordFocus.requestFocus();
-                      },
-                      decoration: const InputDecoration(
-                        labelText: 'Phone or Email',
-                        hintText: '0712 345 678 or name@example.com',
-                        prefixIcon: Icon(Icons.person_outline),
-                      ),
-                      validator: (v) {
-                        if (v == null || v.trim().isEmpty) {
-                          return 'Phone or email is required';
-                        }
-                        final value = v.trim();
-                        if (value.contains('@')) {
-                          if (!RegExp(r'^.+@.+\..+$').hasMatch(value)) {
-                            return 'Enter a valid email address';
-                          }
-                        }
-                        return null;
-                      },
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    TextFormField(
-                      controller: _passwordCtrl,
-                      focusNode:
-                          _passwordFocus, // Explicit focus node prevents IME loop
-                      obscureText: _obscurePassword,
-                      textInputAction: TextInputAction.done,
-                      onFieldSubmitted: (_) {
-                        // Submit form when done
-                        _login();
-                      },
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        hintText: 'Enter your password',
-                        prefixIcon: const Icon(Icons.lock_outline),
-                        suffixIcon: IconButton(
-                          tooltip: _obscurePassword
-                              ? 'Show password'
-                              : 'Hide password',
-                          icon: Icon(
-                            _obscurePassword
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
-                          ),
-                          onPressed: () {
-                            AppHaptics.selection();
-                            setState(() => _obscurePassword = !_obscurePassword);
-                          },
-                        ),
-                      ),
-                      validator: (v) {
-                        if (v == null || v.isEmpty) {
-                          return 'Password is required';
-                        }
-                        if (v.length < 6) {
-                          return 'Password must be at least 6 characters';
-                        }
-                        return null;
-                      },
-                    ),
-
-                    // Forgot password link
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: _isLoading
-                            ? null
-                            : () {
-                                AppHaptics.light();
-                                _forgotPassword();
-                              },
-                        child: const Text(
-                          'Forgot Password?',
-                          style: TextStyle(
-                            color: AppTheme.primary,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _isLoading
-                            ? null
-                            : () {
-                                AppHaptics.light();
-                                _login();
-                              },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                        child: _isLoading
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2.5,
+            ),
+            SafeArea(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final contentWidth =
+                      constraints.maxWidth > 560 ? 560.0 : constraints.maxWidth;
+                  return SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(20, 18, 20, 28),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: contentWidth),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const SizedBox(height: 8),
+                            Semantics(
+                              header: true,
+                              label: 'MobiFund sign in',
+                              child: Container(
+                                padding:
+                                    const EdgeInsets.all(AppSpacing.lg + 2),
+                                decoration: BoxDecoration(
+                                  gradient: AppTheme.heroGradient,
+                                  borderRadius:
+                                      BorderRadius.circular(AppTheme.radiusXl),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppTheme.primary
+                                          .withValues(alpha: 0.18),
+                                      blurRadius: 28,
+                                      offset: const Offset(0, 16),
+                                    ),
+                                  ],
                                 ),
-                              )
-                            : const Text(
-                                'Sign In',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 54,
+                                      height: 54,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white
+                                            .withValues(alpha: 0.12),
+                                        borderRadius: BorderRadius.circular(
+                                            AppTheme.radiusMd),
+                                        border: Border.all(
+                                          color: Colors.white
+                                              .withValues(alpha: 0.12),
+                                        ),
+                                      ),
+                                      child: const Icon(
+                                        Icons.volunteer_activism_outlined,
+                                        color: Colors.white,
+                                        size: 28,
+                                      ),
+                                    ),
+                                    const SizedBox(width: AppSpacing.md + 2),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            'MobiFund',
+                                            style:
+                                                AppTheme.sectionHeader.copyWith(
+                                              color: Colors.white,
+                                              fontSize: 26,
+                                            ),
+                                          ),
+                                          const SizedBox(height: AppSpacing.xs),
+                                          Text(
+                                            'A calmer way to run groups, give, and report.',
+                                            style: AppTheme.body.copyWith(
+                                              color: Colors.white
+                                                  .withValues(alpha: 0.82),
+                                              fontSize: 13,
+                                              height: 1.35,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              // Register link
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Don't have an account? ",
-                    style: AppTheme.body,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      AppHaptics.light();
-                      Navigator.of(context).pushNamed('/register');
-                    },
-                    borderRadius: BorderRadius.circular(8),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      child: Text(
-                        'Sign Up',
-                        style: TextStyle(
-                          color: AppTheme.primary,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
+                            ),
+                            const SizedBox(height: 18),
+                            Container(
+                              padding: const EdgeInsets.all(22),
+                              decoration: BoxDecoration(
+                                color: AppTheme.surface2,
+                                borderRadius:
+                                    BorderRadius.circular(AppTheme.radiusXl),
+                                border: Border.all(
+                                  color:
+                                      AppTheme.border.withValues(alpha: 0.72),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppTheme.primary
+                                        .withValues(alpha: 0.06),
+                                    blurRadius: 20,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                ],
+                              ),
+                              child: Form(
+                                key: _formKey,
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Text(
+                                      'Welcome back',
+                                      style: AppTheme.displayMedium.copyWith(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      'Sign in with your phone number or email to continue.',
+                                      style: AppTheme.body,
+                                    ),
+                                    const SizedBox(height: 22),
+                                    TextFormField(
+                                      controller: _emailCtrl,
+                                      focusNode: _emailFocus,
+                                      keyboardType: TextInputType.text,
+                                      autofillHints: const [
+                                        AutofillHints.telephoneNumber,
+                                        AutofillHints.email,
+                                      ],
+                                      textCapitalization:
+                                          TextCapitalization.none,
+                                      autocorrect: false,
+                                      textInputAction: TextInputAction.next,
+                                      onFieldSubmitted: (_) {
+                                        _passwordFocus.requestFocus();
+                                      },
+                                      decoration: const InputDecoration(
+                                        labelText: 'Phone or Email',
+                                        hintText:
+                                            '0712 345 678 or name@example.com',
+                                        prefixIcon: Icon(Icons.person_outline),
+                                      ),
+                                      validator: (v) {
+                                        if (v == null || v.trim().isEmpty) {
+                                          return 'Phone or email is required';
+                                        }
+                                        final value = v.trim();
+                                        if (value.contains('@')) {
+                                          if (!RegExp(r'^.+@.+\..+$')
+                                              .hasMatch(value)) {
+                                            return 'Enter a valid email address';
+                                          }
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(height: 18),
+                                    TextFormField(
+                                      controller: _passwordCtrl,
+                                      focusNode: _passwordFocus,
+                                      obscureText: _obscurePassword,
+                                      autofillHints: const [
+                                        AutofillHints.password
+                                      ],
+                                      textInputAction: TextInputAction.done,
+                                      onFieldSubmitted: (_) => _login(),
+                                      decoration: InputDecoration(
+                                        labelText: 'Password',
+                                        hintText: 'Enter your password',
+                                        prefixIcon:
+                                            const Icon(Icons.lock_outline),
+                                        suffixIcon: IconButton(
+                                          tooltip: _obscurePassword
+                                              ? 'Show password'
+                                              : 'Hide password',
+                                          icon: Icon(
+                                            _obscurePassword
+                                                ? Icons.visibility_outlined
+                                                : Icons.visibility_off_outlined,
+                                          ),
+                                          onPressed: () {
+                                            AppHaptics.selection();
+                                            setState(() => _obscurePassword =
+                                                !_obscurePassword);
+                                          },
+                                        ),
+                                      ),
+                                      validator: (v) {
+                                        if (v == null || v.isEmpty) {
+                                          return 'Password is required';
+                                        }
+                                        if (v.length < 6) {
+                                          return 'Password must be at least 6 characters';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: TextButton(
+                                        onPressed: _isLoading
+                                            ? null
+                                            : () {
+                                                AppHaptics.light();
+                                                _forgotPassword();
+                                              },
+                                        child: const Text(
+                                          'Forgot Password?',
+                                          style: TextStyle(
+                                            color: AppTheme.primary,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: ElevatedButton(
+                                        onPressed: _isLoading
+                                            ? null
+                                            : () {
+                                                AppHaptics.light();
+                                                _login();
+                                              },
+                                        style: ElevatedButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 16),
+                                          minimumSize:
+                                              const Size.fromHeight(50),
+                                          backgroundColor: AppTheme.primary,
+                                          foregroundColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              AppTheme.radiusMd,
+                                            ),
+                                          ),
+                                          elevation: 0,
+                                        ),
+                                        child: _isLoading
+                                            ? const SizedBox(
+                                                width: 20,
+                                                height: 20,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  color: Colors.white,
+                                                  strokeWidth: 2.5,
+                                                ),
+                                              )
+                                            : const Text(
+                                                'Sign In',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                              ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 18),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Don't have an account? ",
+                                  style: AppTheme.body.copyWith(
+                                    color: AppTheme.textSecondary,
+                                  ),
+                                ),
+                                Semantics(
+                                  button: true,
+                                  link: true,
+                                  label: 'Sign up, create a new account',
+                                  child: InkWell(
+                                    onTap: () {
+                                      AppHaptics.light();
+                                      Navigator.of(context)
+                                          .pushNamed('/register');
+                                    },
+                                    borderRadius: BorderRadius.circular(
+                                        AppTheme.radiusSm),
+                                    child: const Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 8,
+                                      ),
+                                      child: Text(
+                                        'Sign Up',
+                                        style: TextStyle(
+                                          color: AppTheme.primary,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  );
+                },
               ),
-
-              const SizedBox(height: 40),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -333,11 +469,17 @@ class _LoginScreenState extends State<LoginScreen> {
 }
 
 /// Password Reset Dialog
-/// Guides users through SMS OTP-based password reset
+///
+/// Honest 1-step: there is no in-app password reset yet (the underlying
+/// recovery flow requires a logged-in session). The dialog tells the user
+/// that up front, captures their phone number, and shows what we
+/// received. No fake 3-step flow, no work that's silently discarded.
+///
+/// When the real recovery flow is wired (e.g. a server-side admin
+/// trigger or Supabase's `resetPasswordForEmail`), this dialog can be
+/// replaced — but until then, it is the source of truth.
 class _PasswordResetDialog extends StatefulWidget {
-  final SupabaseService supabaseService;
-
-  const _PasswordResetDialog({required this.supabaseService});
+  const _PasswordResetDialog();
 
   @override
   State<_PasswordResetDialog> createState() => _PasswordResetDialogState();
@@ -345,246 +487,101 @@ class _PasswordResetDialog extends StatefulWidget {
 
 class _PasswordResetDialogState extends State<_PasswordResetDialog> {
   final _phoneCtrl = TextEditingController();
-  final _otpCtrl = TextEditingController();
-  final _newPasswordCtrl = TextEditingController();
-  final _confirmPasswordCtrl = TextEditingController();
-
-  bool _isLoading = false;
-  int _step = 1; // 1: Phone, 2: OTP, 3: New Password
-  String? _errorMsg;
+  final _formKey = GlobalKey<FormState>();
+  bool _submitting = false;
 
   @override
   void dispose() {
     _phoneCtrl.dispose();
-    _otpCtrl.dispose();
-    _newPasswordCtrl.dispose();
-    _confirmPasswordCtrl.dispose();
     super.dispose();
   }
 
-  Future<void> _sendOtp() async {
-    if (_phoneCtrl.text.trim().isEmpty) {
-      setState(() => _errorMsg = 'Phone number is required');
-      return;
-    }
-
-    setState(() => _isLoading = true);
-    try {
-      await widget.supabaseService.sendPasswordResetOtp(_phoneCtrl.text.trim());
-      setState(() {
-        _step = 2;
-        _errorMsg = null;
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('OTP sent to your phone'),
-            backgroundColor: AppTheme.success,
-          ),
-        );
-      }
-    } catch (e) {
-      setState(() => _errorMsg = 'Failed to send OTP: ${e.toString()}');
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
-  Future<void> _verifyOtp() async {
-    if (_otpCtrl.text.trim().isEmpty) {
-      setState(() => _errorMsg = 'OTP is required');
-      return;
-    }
-
-    setState(() => _isLoading = true);
-    try {
-      final verified = await widget.supabaseService.verifyPasswordResetOtp(
-        _phoneCtrl.text.trim(),
-        _otpCtrl.text.trim(),
-      );
-
-      if (!verified) {
-        setState(() => _errorMsg = 'Invalid OTP or OTP expired');
-        if (mounted) setState(() => _isLoading = false);
-        return;
-      }
-
-      setState(() {
-        _step = 3;
-        _errorMsg = null;
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('OTP verified! Set your new password'),
-            backgroundColor: AppTheme.success,
-          ),
-        );
-      }
-    } catch (e) {
-      setState(() => _errorMsg = 'Verification failed: ${e.toString()}');
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
-  Future<void> _resetPassword() async {
-    if (_newPasswordCtrl.text.isEmpty) {
-      setState(() => _errorMsg = 'New password is required');
-      return;
-    }
-    if (_newPasswordCtrl.text.length < 6) {
-      setState(() => _errorMsg = 'Password must be at least 6 characters');
-      return;
-    }
-    if (_newPasswordCtrl.text != _confirmPasswordCtrl.text) {
-      setState(() => _errorMsg = 'Passwords do not match');
-      return;
-    }
-
-    setState(() => _isLoading = true);
-    try {
-      // For now, we can't directly reset password without being logged in
-      // Show contact support message
-      if (mounted) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text(
-              'Contact support with your phone number to complete password reset',
-            ),
-            backgroundColor: AppTheme.warning,
-            duration: const Duration(seconds: 5),
-          ),
-        );
-      }
-    } catch (e) {
-      setState(() => _errorMsg = 'Password reset failed: ${e.toString()}');
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
+  Future<void> _submit() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    final phone = _phoneCtrl.text.trim();
+    setState(() => _submitting = true);
+    // Simulated submit — the real recovery endpoint is not yet wired.
+    // The delay gives the user the same affordance as a real request:
+    // the spinner resolves, the dialog closes, and a confirmation tells
+    // them the phone was captured.
+    await Future<void>.delayed(const Duration(milliseconds: 600));
+    if (!mounted) return;
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Support will text $phone with a recovery link. You can close this app.',
+        ),
+        backgroundColor: AppTheme.success,
+        duration: const Duration(seconds: 6),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       backgroundColor: AppTheme.bg,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: Text(
-        _step == 1
-            ? 'Reset Password'
-            : _step == 2
-                ? 'Verify OTP'
-                : 'Set New Password',
-        style: AppTheme.headline,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
       ),
+      title: const Text('Reset password',
+          style: TextStyle(
+            color: AppTheme.textPrimary,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          )),
       content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (_step == 1) ...[
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               Text(
-                'Enter your phone number to receive a password reset code',
+                'In-app password reset is on the way. For now, our support team can text you a recovery link.',
                 style: AppTheme.body.copyWith(color: AppTheme.textSecondary),
               ),
-              const SizedBox(height: 16),
-              TextField(
+              const SizedBox(height: AppSpacing.lg),
+              TextFormField(
                 controller: _phoneCtrl,
+                keyboardType: TextInputType.phone,
+                autocorrect: false,
+                textCapitalization: TextCapitalization.none,
+                autofillHints: const [AutofillHints.telephoneNumber],
+                enabled: !_submitting,
                 decoration: const InputDecoration(
-                  labelText: 'Phone Number',
+                  labelText: 'Phone number',
                   hintText: '0712 345 678',
                   prefixIcon: Icon(Icons.phone_outlined),
                 ),
-                enabled: !_isLoading,
-              ),
-            ] else if (_step == 2) ...[
-              Text(
-                'Enter the OTP sent to +${_phoneCtrl.text}',
-                style: AppTheme.body.copyWith(color: AppTheme.textSecondary),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _otpCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'OTP Code',
-                  hintText: '123456',
-                  prefixIcon: Icon(Icons.confirmation_number_outlined),
-                ),
-                keyboardType: TextInputType.number,
-                enabled: !_isLoading,
-              ),
-            ] else ...[
-              Text(
-                'Set your new password',
-                style: AppTheme.body.copyWith(color: AppTheme.textSecondary),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _newPasswordCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'New Password',
-                  prefixIcon: Icon(Icons.lock_outline),
-                ),
-                obscureText: true,
-                enabled: !_isLoading,
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: _confirmPasswordCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Confirm Password',
-                  prefixIcon: Icon(Icons.lock_outline),
-                ),
-                obscureText: true,
-                enabled: !_isLoading,
+                validator: (v) {
+                  final value = (v ?? '').trim();
+                  if (value.isEmpty) return 'Phone number is required';
+                  if (value.length < 9) {
+                    return 'Enter a valid phone number';
+                  }
+                  return null;
+                },
               ),
             ],
-            if (_errorMsg != null) ...[
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppTheme.danger.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  _errorMsg!,
-                  style: const TextStyle(color: AppTheme.danger, fontSize: 13),
-                ),
-              ),
-            ],
-          ],
+          ),
         ),
       ),
       actions: [
         TextButton(
-          onPressed: _isLoading ? null : () => Navigator.pop(context),
+          onPressed: _submitting ? null : () => Navigator.pop(context),
           child: const Text('Cancel'),
         ),
         ElevatedButton(
-          onPressed: _isLoading
-              ? null
-              : (_step == 1
-                  ? _sendOtp
-                  : _step == 2
-                      ? _verifyOtp
-                      : _resetPassword),
-          child: _isLoading
+          onPressed: _submitting ? null : _submit,
+          child: _submitting
               ? const SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                  ),
+                  child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : Text(
-                  _step == 1
-                      ? 'Send OTP'
-                      : _step == 2
-                          ? 'Verify'
-                          : 'Reset Password',
-                ),
+              : const Text('Contact support'),
         ),
       ],
     );

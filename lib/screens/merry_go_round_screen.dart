@@ -135,6 +135,7 @@ class _MerryGoRoundScreenState extends State<MerryGoRoundScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showCreateCycleDialog(context),
+        tooltip: 'Create a new merry-go-round cycle',
         icon: const Icon(Icons.add),
         label: const Text('New Cycle'),
       ),
@@ -179,29 +180,10 @@ class _MerryGoRoundScreenState extends State<MerryGoRoundScreen> {
   }
 
   Widget _emptyState() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.autorenew_outlined, size: 64, color: AppTheme.textLight),
-          SizedBox(height: 16),
-          Text(
-            'No Merry-Go-Round cycles yet',
-            style: TextStyle(
-              fontSize: 16,
-              color: AppTheme.textSecondary,
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Create a cycle to start rotational savings',
-            style: TextStyle(
-              fontSize: 14,
-              color: AppTheme.textSecondary,
-            ),
-          ),
-        ],
-      ),
+    return const AppEmptyState(
+      icon: Icons.autorenew_outlined,
+      title: 'No Merry-Go-Round cycles yet',
+      message: 'Create a cycle to start rotational savings for the group.',
     );
   }
 
@@ -215,12 +197,21 @@ class _MerryGoRoundScreenState extends State<MerryGoRoundScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.cardBg,
+        color: AppTheme.surface2,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isComplete ? AppTheme.success : AppTheme.border,
-          width: isComplete ? 2 : 1,
+          color: isComplete
+              ? AppTheme.success.withValues(alpha: 0.18)
+              : Colors.transparent,
+          width: 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primary.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -19,8 +19,9 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
     return Scaffold(
       backgroundColor: AppTheme.bg,
       appBar: AppBar(
-        backgroundColor: AppTheme.bg,
+        backgroundColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: const Text(
           'Privacy & Security',
           style: TextStyle(
@@ -29,266 +30,321 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Security Section
-            _sectionTitle('Security'),
-            const SizedBox(height: 12),
-            SectionCard(
-              title: '',
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Column(
-                children: [
-                  SwitchListTile(
-                    value: _biometricEnabled,
-                    onChanged: (val) {
-                      setState(() => _biometricEnabled = val);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            val
-                                ? 'Biometric authentication enabled'
-                                : 'Biometric authentication disabled',
+      body: Container(
+        decoration: const BoxDecoration(gradient: AppTheme.softGradient),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(22),
+                decoration: BoxDecoration(
+                  gradient: AppTheme.heroGradient,
+                  borderRadius: BorderRadius.circular(28),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.primary.withValues(alpha: 0.18),
+                      blurRadius: 24,
+                      offset: const Offset(0, 12),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Privacy & Security',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.4,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Keep access tight and visibility under your control.',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.82),
+                        fontSize: 13,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 18),
+              _sectionTitle('Security'),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppTheme.surface2,
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.primary.withValues(alpha: 0.04),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    SwitchListTile(
+                      value: _biometricEnabled,
+                      onChanged: (val) {
+                        setState(() => _biometricEnabled = val);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              val
+                                  ? 'Biometric authentication enabled'
+                                  : 'Biometric authentication disabled',
+                            ),
+                            backgroundColor:
+                                val ? AppTheme.success : AppTheme.textLight,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
-                          backgroundColor:
-                              val ? AppTheme.success : AppTheme.textLight,
-                          behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                        );
+                      },
+                      activeThumbColor: AppTheme.primary,
+                      title: const Text(
+                        'Biometric Authentication',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.textPrimary,
                         ),
-                      );
-                    },
-                    activeThumbColor: AppTheme.primary,
-                    title: const Text(
-                      'Biometric Authentication',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.textPrimary,
+                      ),
+                      subtitle: const Text(
+                        'Use fingerprint or face ID to secure your app',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.textSecondary,
+                        ),
                       ),
                     ),
-                    subtitle: const Text(
-                      'Use fingerprint or face ID to secure your app',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppTheme.textSecondary,
+                    const Divider(height: 1),
+                    SwitchListTile(
+                      value: _requireAuthOnLaunch,
+                      onChanged: (val) =>
+                          setState(() => _requireAuthOnLaunch = val),
+                      activeThumbColor: AppTheme.primary,
+                      title: const Text(
+                        'Require Authentication on Launch',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.textPrimary,
+                        ),
+                      ),
+                      subtitle: const Text(
+                        'Always authenticate when opening the app',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.textSecondary,
+                        ),
                       ),
                     ),
-                  ),
-                  const Divider(height: 1),
-                  SwitchListTile(
-                    value: _requireAuthOnLaunch,
-                    onChanged: (val) =>
-                        setState(() => _requireAuthOnLaunch = val),
-                    activeThumbColor: AppTheme.primary,
-                    title: const Text(
-                      'Require Authentication on Launch',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.textPrimary,
-                      ),
-                    ),
-                    subtitle: const Text(
-                      'Always authenticate when opening the app',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppTheme.textSecondary,
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // Privacy Section
-            _sectionTitle('Privacy'),
-            const SizedBox(height: 12),
-            SectionCard(
-              title: '',
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Column(
-                children: [
-                  SwitchListTile(
-                    value: _showSensitiveData,
-                    onChanged: (val) =>
-                        setState(() => _showSensitiveData = val),
-                    activeThumbColor: AppTheme.primary,
-                    title: const Text(
-                      'Show Sensitive Data',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.textPrimary,
+              const SizedBox(height: 24),
+              _sectionTitle('Privacy'),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppTheme.surface2,
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.primary.withValues(alpha: 0.04),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    SwitchListTile(
+                      value: _showSensitiveData,
+                      onChanged: (val) =>
+                          setState(() => _showSensitiveData = val),
+                      activeThumbColor: AppTheme.primary,
+                      title: const Text(
+                        'Show Sensitive Data',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.textPrimary,
+                        ),
+                      ),
+                      subtitle: const Text(
+                        'Display amounts and balances on screen',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.textSecondary,
+                        ),
                       ),
                     ),
-                    subtitle: const Text(
-                      'Display amounts and balances on screen',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppTheme.textSecondary,
+                    const Divider(height: 1),
+                    ListTile(
+                      onTap: () => _showChangePasswordDialog(),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 4),
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primary.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(
+                          Icons.lock_outline,
+                          color: AppTheme.primary,
+                          size: 20,
+                        ),
                       ),
+                      title: const Text(
+                        'Change Password',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.textPrimary,
+                        ),
+                      ),
+                      subtitle: const Text(
+                        'Update your account password',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.textSecondary,
+                        ),
+                      ),
+                      trailing: const Icon(Icons.chevron_right,
+                          color: AppTheme.textLight),
                     ),
-                  ),
-                  const Divider(height: 1),
-                  ListTile(
-                    onTap: () => _showChangePasswordDialog(),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppTheme.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(10),
+                    const Divider(height: 1),
+                    ListTile(
+                      onTap: () => _showDataPrivacyInfo(),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 4),
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppTheme.success.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(
+                          Icons.shield_outlined,
+                          color: AppTheme.success,
+                          size: 20,
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.lock_outline,
-                        color: AppTheme.primary,
-                        size: 20,
+                      title: const Text(
+                        'Data Privacy Information',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.textPrimary,
+                        ),
                       ),
+                      subtitle: const Text(
+                        'How we protect your data',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.textSecondary,
+                        ),
+                      ),
+                      trailing: const Icon(Icons.chevron_right,
+                          color: AppTheme.textLight),
                     ),
-                    title: const Text(
-                      'Change Password',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.textPrimary,
-                      ),
-                    ),
-                    subtitle: const Text(
-                      'Update your account password',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppTheme.textSecondary,
-                      ),
-                    ),
-                    trailing: const Icon(Icons.chevron_right,
-                        color: AppTheme.textLight),
-                  ),
-                  const Divider(height: 1),
-                  ListTile(
-                    onTap: () => _showDataPrivacyInfo(),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppTheme.success.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(
-                        Icons.shield_outlined,
-                        color: AppTheme.success,
-                        size: 20,
-                      ),
-                    ),
-                    title: const Text(
-                      'Data Privacy Information',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.textPrimary,
-                      ),
-                    ),
-                    subtitle: const Text(
-                      'How we protect your data',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppTheme.textSecondary,
-                      ),
-                    ),
-                    trailing: const Icon(Icons.chevron_right,
-                        color: AppTheme.textLight),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // Session Section
-            _sectionTitle('Session'),
-            const SizedBox(height: 12),
-            SectionCard(
-              title: '',
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Column(
-                children: [
-                  ListTile(
-                    onTap: () => _showActiveSessions(),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppTheme.warning.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(10),
+              const SizedBox(height: 24),
+              _sectionTitle('Session'),
+              const SizedBox(height: 12),
+              SectionCard(
+                title: '',
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Column(
+                  children: [
+                    ListTile(
+                      onTap: () => _showActiveSessions(),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 4),
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppTheme.warning.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(
+                          Icons.devices,
+                          color: AppTheme.warning,
+                          size: 20,
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.devices,
-                        color: AppTheme.warning,
-                        size: 20,
+                      title: const Text(
+                        'Active Sessions',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.textPrimary,
+                        ),
                       ),
+                      subtitle: const Text(
+                        'Manage your active login sessions',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.textSecondary,
+                        ),
+                      ),
+                      trailing: const Icon(Icons.chevron_right,
+                          color: AppTheme.textLight),
                     ),
-                    title: const Text(
-                      'Active Sessions',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.textPrimary,
+                    const Divider(height: 1),
+                    ListTile(
+                      onTap: () => _logoutAllDevices(),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 4),
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppTheme.danger.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(
+                          Icons.logout,
+                          color: AppTheme.danger,
+                          size: 20,
+                        ),
                       ),
+                      title: const Text(
+                        'Logout All Devices',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.textPrimary,
+                        ),
+                      ),
+                      subtitle: const Text(
+                        'Securely logout from all devices',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.textSecondary,
+                        ),
+                      ),
+                      trailing: const Icon(Icons.chevron_right,
+                          color: AppTheme.textLight),
                     ),
-                    subtitle: const Text(
-                      'Manage your active login sessions',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppTheme.textSecondary,
-                      ),
-                    ),
-                    trailing: const Icon(Icons.chevron_right,
-                        color: AppTheme.textLight),
-                  ),
-                  const Divider(height: 1),
-                  ListTile(
-                    onTap: () => _logoutAllDevices(),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppTheme.danger.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(
-                        Icons.logout,
-                        color: AppTheme.danger,
-                        size: 20,
-                      ),
-                    ),
-                    title: const Text(
-                      'Logout All Devices',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.textPrimary,
-                      ),
-                    ),
-                    subtitle: const Text(
-                      'Securely logout from all devices',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppTheme.textSecondary,
-                      ),
-                    ),
-                    trailing: const Icon(Icons.chevron_right,
-                        color: AppTheme.textLight),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -182,33 +182,40 @@ class _ContributionsScreenState extends State<ContributionsScreen>
         slivers: [
           // App Bar
           SliverAppBar(
-            expandedHeight: 200,
+            expandedHeight: 240,
             floating: false,
             pinned: true,
-            backgroundColor: AppTheme.bg,
+            backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
-                padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
+                padding: const EdgeInsets.fromLTRB(20, 72, 20, 20),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppTheme.success,
-                      AppTheme.success.withValues(alpha: 0.7)
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  gradient: AppTheme.heroGradient,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: const Icon(
+                        Icons.volunteer_activism_outlined,
+                        color: Colors.white,
+                        size: 28,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
                     const Text(
                       'Total Contributions',
                       style: TextStyle(
                         color: Colors.white70,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -216,8 +223,9 @@ class _ContributionsScreenState extends State<ContributionsScreen>
                       formatKes(total),
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 34,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.5,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -301,6 +309,7 @@ class _ContributionsScreenState extends State<ContributionsScreen>
                 }
               },
               backgroundColor: AppTheme.success,
+              tooltip: 'Record a new contribution',
               icon: const Icon(Icons.add),
               label: const Text('Add Contribution'),
             ),
@@ -343,21 +352,11 @@ class _ContributionsScreenState extends State<ContributionsScreen>
           ),
         Expanded(
           child: filtered.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.receipt_long_outlined,
-                          size: 64, color: AppTheme.textLight),
-                      const SizedBox(height: 16),
-                      Text(
-                        'No contributions yet',
-                        style: AppTheme.body.copyWith(
-                          color: AppTheme.textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
+              ? const AppEmptyState(
+                  icon: Icons.receipt_long_outlined,
+                  title: 'No contributions yet',
+                  message:
+                      'Record a contribution to start tracking this group\'s savings.',
                 )
               : ListView.separated(
                   padding: const EdgeInsets.all(20),
@@ -474,9 +473,8 @@ class _ContributionsScreenState extends State<ContributionsScreen>
       margin: const EdgeInsets.all(20),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppTheme.cardBg,
+        color: AppTheme.surface2,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.border),
         boxShadow: [
           BoxShadow(
             color: AppTheme.primary.withValues(alpha: 0.08),
@@ -645,9 +643,15 @@ class _ContributionsScreenState extends State<ContributionsScreen>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.cardBg,
+        color: AppTheme.surface2,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.border),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primary.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         children: [

@@ -7,8 +7,8 @@ const _uuid = Uuid();
 // LOAN TYPES
 // ─────────────────────────────────────────
 enum LoanType {
-  softLoan,    // Payable within 1 month, no interest
-  normalLoan,  // Custom repayment period with interest
+  softLoan, // Payable within 1 month, no interest
+  normalLoan, // Custom repayment period with interest
 }
 
 extension LoanTypeExtension on LoanType {
@@ -146,14 +146,35 @@ class Loan {
     this.completedDate,
     this.notes,
     this.synced = false,
-  })  : interestRate = (loanType == LoanType.softLoan ? 0 : (interestRate ?? 0)),
+  })  : interestRate =
+            (loanType == LoanType.softLoan ? 0 : (interestRate ?? 0)),
         id = id ?? _uuid.v4(),
         applicationDate = applicationDate ?? DateTime.now(),
-        interestAmount = interestAmount ?? (principal * (loanType == LoanType.softLoan ? 0 : (interestRate ?? 0)) / 100),
-        totalAmount = totalAmount ?? (principal + (principal * (loanType == LoanType.softLoan ? 0 : (interestRate ?? 0)) / 100)),
-        monthlyInstallment = monthlyInstallment ?? ((principal + (principal * (loanType == LoanType.softLoan ? 0 : (interestRate ?? 0)) / 100)) / repaymentPeriodMonths),
-        balance = balance ?? (principal + (principal * (loanType == LoanType.softLoan ? 0 : (interestRate ?? 0)) / 100)),
-        dueDate = dueDate ?? _calculateDueDate(applicationDate ?? DateTime.now(), repaymentPeriodMonths);
+        interestAmount = interestAmount ??
+            (principal *
+                (loanType == LoanType.softLoan ? 0 : (interestRate ?? 0)) /
+                100),
+        totalAmount = totalAmount ??
+            (principal +
+                (principal *
+                    (loanType == LoanType.softLoan ? 0 : (interestRate ?? 0)) /
+                    100)),
+        monthlyInstallment = monthlyInstallment ??
+            ((principal +
+                    (principal *
+                        (loanType == LoanType.softLoan
+                            ? 0
+                            : (interestRate ?? 0)) /
+                        100)) /
+                repaymentPeriodMonths),
+        balance = balance ??
+            (principal +
+                (principal *
+                    (loanType == LoanType.softLoan ? 0 : (interestRate ?? 0)) /
+                    100)),
+        dueDate = dueDate ??
+            _calculateDueDate(
+                applicationDate ?? DateTime.now(), repaymentPeriodMonths);
 
   static DateTime _calculateDueDate(DateTime start, int months) {
     final month = start.month - 1 + months;
@@ -210,9 +231,10 @@ class Loan {
         approvalDate: m['approval_date'] == '' || m['approval_date'] == null
             ? null
             : DateTime.parse(m['approval_date']),
-        disbursementDate: m['disbursement_date'] == '' || m['disbursement_date'] == null
-            ? null
-            : DateTime.parse(m['disbursement_date']),
+        disbursementDate:
+            m['disbursement_date'] == '' || m['disbursement_date'] == null
+                ? null
+                : DateTime.parse(m['disbursement_date']),
         dueDate: DateTime.parse(m['due_date']),
         completedDate: m['completed_date'] == '' || m['completed_date'] == null
             ? null
@@ -280,9 +302,12 @@ class Loan {
       );
 
   bool get isOverdue =>
-      DateTime.now().isAfter(dueDate) && status == LoanStatus.active && balance > 0;
+      DateTime.now().isAfter(dueDate) &&
+      status == LoanStatus.active &&
+      balance > 0;
 
-  double get progressPercent => totalAmount > 0 ? (paidAmount / totalAmount * 100) : 0;
+  double get progressPercent =>
+      totalAmount > 0 ? (paidAmount / totalAmount * 100) : 0;
 }
 
 // ─────────────────────────────────────────
@@ -339,7 +364,8 @@ class LoanRepayment {
         amount: (m['amount'] as num).toDouble(),
         date: DateTime.parse(m['date']),
         paymentMethod: m['payment_method'] == '' ? null : m['payment_method'],
-        transactionCode: m['transaction_code'] == '' ? null : m['transaction_code'],
+        transactionCode:
+            m['transaction_code'] == '' ? null : m['transaction_code'],
         notes: m['notes'] == '' ? null : m['notes'],
         createdAt: DateTime.parse(m['created_at']),
         synced: (m['synced'] ?? 0) == 1,
@@ -432,7 +458,8 @@ class MerryGoRoundCycle {
         'synced': synced ? 1 : 0,
       };
 
-  factory MerryGoRoundCycle.fromMap(Map<String, dynamic> m) => MerryGoRoundCycle(
+  factory MerryGoRoundCycle.fromMap(Map<String, dynamic> m) =>
+      MerryGoRoundCycle(
         id: m['id'],
         orgId: m['org_id'],
         name: m['name'],
@@ -446,10 +473,12 @@ class MerryGoRoundCycle {
             ? List<String>.from(jsonDecode(m['member_order']))
             : [],
         currentPosition: m['current_position'] ?? 0,
-        currentRecipientId: m['current_recipient_id'] == '' ? null : m['current_recipient_id'],
-        completedRecipients: m['completed_recipients'] != null && m['completed_recipients'] != ''
-            ? List<String>.from(jsonDecode(m['completed_recipients']))
-            : [],
+        currentRecipientId:
+            m['current_recipient_id'] == '' ? null : m['current_recipient_id'],
+        completedRecipients:
+            m['completed_recipients'] != null && m['completed_recipients'] != ''
+                ? List<String>.from(jsonDecode(m['completed_recipients']))
+                : [],
         createdAt: DateTime.parse(m['created_at']),
         synced: (m['synced'] ?? 0) == 1,
       );
@@ -497,7 +526,8 @@ class MerryGoRoundCycle {
       );
 
   double get totalPool => contributionAmount * totalMembers;
-  double get distributedAmount => contributionAmount * completedRecipients.length;
+  double get distributedAmount =>
+      contributionAmount * completedRecipients.length;
   double get remainingAmount => totalPool - distributedAmount;
   int get remainingRecipients => totalMembers - completedRecipients.length;
 }
@@ -560,7 +590,8 @@ class Share {
         pricePerShare: (m['price_per_share'] as num).toDouble(),
         totalValue: (m['total_value'] as num).toDouble(),
         paymentMethod: m['payment_method'] == '' ? null : m['payment_method'],
-        transactionCode: m['transaction_code'] == '' ? null : m['transaction_code'],
+        transactionCode:
+            m['transaction_code'] == '' ? null : m['transaction_code'],
         purchaseDate: DateTime.parse(m['purchase_date']),
         isActive: (m['is_active'] ?? 1) == 1,
         createdAt: DateTime.parse(m['created_at']),
@@ -634,7 +665,8 @@ class Goal {
     this.completedAt,
     this.synced = false,
   })  : id = id ?? _uuid.v4(),
-        targetDate = targetDate ?? DateTime.now().add(const Duration(days: 365)),
+        targetDate =
+            targetDate ?? DateTime.now().add(const Duration(days: 365)),
         createdAt = createdAt ?? DateTime.now();
 
   Map<String, dynamic> toMap() => {
@@ -709,7 +741,8 @@ class Goal {
         synced: synced ?? this.synced,
       );
 
-  double get progressPercent => targetAmount > 0 ? (raisedAmount / targetAmount * 100) : 0;
+  double get progressPercent =>
+      targetAmount > 0 ? (raisedAmount / targetAmount * 100) : 0;
   double get remainingAmount => targetAmount - raisedAmount;
   bool get isOnTrack => DateTime.now().isBefore(targetDate);
 }
@@ -833,7 +866,8 @@ class WelfareContribution {
         'synced': synced ? 1 : 0,
       };
 
-  factory WelfareContribution.fromMap(Map<String, dynamic> m) => WelfareContribution(
+  factory WelfareContribution.fromMap(Map<String, dynamic> m) =>
+      WelfareContribution(
         id: m['id'],
         orgId: m['org_id'],
         memberId: m['member_id'],

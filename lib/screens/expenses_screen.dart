@@ -182,49 +182,50 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 180,
+            expandedHeight: 230,
             floating: false,
             pinned: true,
-            backgroundColor: AppTheme.bg,
+            backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
-                padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
+                padding: const EdgeInsets.fromLTRB(20, 72, 20, 20),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppTheme.danger,
-                      AppTheme.danger.withValues(alpha: 0.7)
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  gradient: AppTheme.heroGradient,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Total Expenses',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Icon(Icons.receipt_long,
-                            color: Colors.white70, size: 20),
-                      ],
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: const Icon(
+                        Icons.receipt_long_outlined,
+                        color: Colors.white,
+                        size: 28,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Total Expenses',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       formatKes(total),
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 34,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.5,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -255,6 +256,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
           ? null
           : FloatingActionButton.extended(
               onPressed: () => setState(() => _showForm = true),
+              tooltip: 'Record a new expense',
               backgroundColor: AppTheme.danger,
               icon: const Icon(Icons.add),
               label: const Text('Add Expense'),
@@ -298,19 +300,11 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
           ),
         ),
         if (filtered.isEmpty)
-          const Padding(
-            padding: EdgeInsets.all(48),
-            child: Center(
-              child: Column(
-                children: [
-                  Icon(Icons.receipt_long_outlined,
-                      size: 64, color: AppTheme.textLight),
-                  SizedBox(height: 16),
-                  Text('No expenses yet',
-                      style: TextStyle(color: AppTheme.textSecondary)),
-                ],
-              ),
-            ),
+          const AppEmptyState(
+            icon: Icons.receipt_long_outlined,
+            title: 'No expenses yet',
+            message:
+                'When the group records an expense, it will appear here for tracking.',
           )
         else
           ListView.separated(
@@ -469,9 +463,15 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.cardBg,
+        color: AppTheme.surface2,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.border),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primary.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         children: [

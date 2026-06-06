@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "framework": "flutter",
+  "files": [],
+  "insertBefore": null,
+  "commentSyntax": null,
+  "liveModeAvailable": false,
+  "liveModeReason": "Flutter is not a web framework with HTML entries that can be runtime-injected. Live variant mode is not available for this project. Use `flutter run` on an emulator/simulator and the visual changes are applied via hot reload.",
+  "cspChecked": true,
+  "registeredAt": "2026-06-06T00:00:00Z"
+}

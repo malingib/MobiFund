@@ -141,6 +141,7 @@ class _SharesScreenState extends State<SharesScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showBuySharesDialog(context),
+        tooltip: 'Buy more shares',
         icon: const Icon(Icons.add_rounded),
         label: const Text('Buy Shares'),
       ),
@@ -179,47 +180,10 @@ class _SharesScreenState extends State<SharesScreen> {
   }
 
   Widget _buildEmptyState() {
-    return Card(
-      elevation: 0,
-      color: AppTheme.surface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppTheme.primary.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Icon(
-                Icons.pie_chart_outline_rounded,
-                size: 48,
-                color: AppTheme.primary.withValues(alpha: 0.6),
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'No shares yet',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              'Tap the button below to buy your first shares',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13,
-                color: AppTheme.textSecondary,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return const AppEmptyState(
+      icon: Icons.pie_chart_outline_rounded,
+      title: 'No shares yet',
+      message: 'Tap the button below to buy your first shares.',
     );
   }
 

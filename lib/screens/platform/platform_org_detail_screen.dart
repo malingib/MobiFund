@@ -58,7 +58,8 @@ class PlatformOrgDetailScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppTheme.warning.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppTheme.warning.withValues(alpha: 0.25)),
+                border:
+                    Border.all(color: AppTheme.warning.withValues(alpha: 0.25)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,7 +75,8 @@ class PlatformOrgDetailScreen extends StatelessWidget {
                   const SizedBox(height: 6),
                   const Text(
                     'Start a time-bound support session to access this org as admin-equivalent. All writes will be audited.',
-                    style: TextStyle(fontSize: 12, color: AppTheme.textSecondary),
+                    style:
+                        TextStyle(fontSize: 12, color: AppTheme.textSecondary),
                   ),
                   const SizedBox(height: 12),
                   SizedBox(
@@ -100,16 +102,16 @@ class PlatformOrgDetailScreen extends StatelessWidget {
                                   (res['organization'] as Map)
                                       .cast<String, dynamic>(),
                                 );
-                                final expiresAt =
-                                    DateTime.parse(session['expires_at'].toString());
+                                final expiresAt = DateTime.parse(
+                                    session['expires_at'].toString());
                                 await state.enterSupportMode(
                                   sessionId: session['id'].toString(),
                                   expiresAt: expiresAt,
                                   organization: org,
                                 );
                                 if (!context.mounted) return;
-                                Navigator.of(context)
-                                    .pushNamedAndRemoveUntil('/home', (r) => false);
+                                Navigator.of(context).pushNamedAndRemoveUntil(
+                                    '/home', (r) => false);
                               } catch (e) {
                                 if (!context.mounted) return;
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -157,8 +159,10 @@ class PlatformOrgDetailScreen extends StatelessWidget {
       children: [
         _kpiCard('Members', memberCount, Icons.people, AppTheme.primary),
         _kpiCard('Loans', loanCount, Icons.handshake_outlined, AppTheme.accent),
-        _kpiCard('Contributions', totalContrib, Icons.trending_up, AppTheme.success),
-        _kpiCard('Expenses', totalExpense, Icons.trending_down, AppTheme.danger),
+        _kpiCard(
+            'Contributions', totalContrib, Icons.trending_up, AppTheme.success),
+        _kpiCard(
+            'Expenses', totalExpense, Icons.trending_down, AppTheme.danger),
       ],
     );
   }
@@ -167,9 +171,15 @@ class PlatformOrgDetailScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppTheme.cardBg,
+        color: AppTheme.surface2,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.border),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primary.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -202,7 +212,8 @@ class PlatformOrgDetailScreen extends StatelessWidget {
                   label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary),
+                  style: const TextStyle(
+                      fontSize: 11, color: AppTheme.textSecondary),
                 ),
               ],
             ),
@@ -212,4 +223,3 @@ class PlatformOrgDetailScreen extends StatelessWidget {
     );
   }
 }
-

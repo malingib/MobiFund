@@ -98,7 +98,8 @@ class _MpesaReconScreenState extends State<MpesaReconScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.bg,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg)),
         title: Text('Match Payment', style: AppTheme.headline),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -273,9 +274,15 @@ class _MpesaReconScreenState extends State<MpesaReconScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.cardBg,
+        color: AppTheme.surface2,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.border),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primary.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -330,9 +337,15 @@ class _MpesaReconScreenState extends State<MpesaReconScreen> {
   Widget _buildAction() {
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: const BoxDecoration(
-        color: AppTheme.cardBg,
-        border: Border(top: BorderSide(color: AppTheme.border)),
+      decoration: BoxDecoration(
+        color: AppTheme.surface2,
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primary.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, -4),
+          ),
+        ],
       ),
       child: SizedBox(
         width: double.infinity,

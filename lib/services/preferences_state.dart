@@ -49,7 +49,8 @@ class PreferencesState extends ChangeNotifier {
     _locale = locale;
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_kLocale, '${locale.languageCode}_${locale.countryCode ?? ''}');
+    await prefs.setString(
+        _kLocale, '${locale.languageCode}_${locale.countryCode ?? ''}');
   }
 
   static Locale? _parseLocale(String? s) {
@@ -62,4 +63,3 @@ class PreferencesState extends ChangeNotifier {
     return Locale(lang, (country?.isEmpty ?? true) ? null : country);
   }
 }
-

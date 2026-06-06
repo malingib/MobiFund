@@ -19,7 +19,7 @@ class PushNotificationService {
       // final messaging = FirebaseMessaging.instance;
       // await messaging.requestPermission();
       // final token = await messaging.getToken();
-      // 
+      //
       // For now, token registration requires Firebase setup at native level.
       // See: https://firebase.flutter.dev/docs/messaging/overview
 
@@ -31,18 +31,15 @@ class PushNotificationService {
 
   /// Remove device token on logout
   Future<void> removeDeviceToken() async {
-     try {
-       final user = _supabase.auth.currentUser;
-       if (user == null) return;
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user == null) return;
 
-       await _supabase
-           .from('user_devices')
-           .delete()
-           .eq('user_id', user.id);
-       debugPrint("Device token removed");
-     } catch (e) {
-        debugPrint("Push Notification Deletion Error: $e");
-     }
+      await _supabase.from('user_devices').delete().eq('user_id', user.id);
+      debugPrint("Device token removed");
+    } catch (e) {
+      debugPrint("Push Notification Deletion Error: $e");
+    }
   }
 
   /// Initialize foreground message listeners

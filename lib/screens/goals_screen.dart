@@ -133,6 +133,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showCreateGoalDialog(context),
+        tooltip: 'Create a new savings goal',
         icon: const Icon(Icons.flag),
         label: const Text('Create Goal'),
       ),
@@ -177,29 +178,10 @@ class _GoalsScreenState extends State<GoalsScreen> {
   }
 
   Widget _emptyState() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.flag_outlined, size: 64, color: AppTheme.textLight),
-          SizedBox(height: 16),
-          Text(
-            'No goals yet',
-            style: TextStyle(
-              color: AppTheme.textSecondary,
-              fontSize: 16,
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Create your first savings goal to get started',
-            style: TextStyle(
-              color: AppTheme.textSecondary,
-              fontSize: 13,
-            ),
-          ),
-        ],
-      ),
+    return const AppEmptyState(
+      icon: Icons.flag_outlined,
+      title: 'No goals yet',
+      message: 'Create your first savings goal to get started.',
     );
   }
 
@@ -210,12 +192,21 @@ class _GoalsScreenState extends State<GoalsScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.cardBg,
+        color: AppTheme.surface2,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isComplete ? AppTheme.success : AppTheme.border,
-          width: isComplete ? 2 : 1,
+          color: isComplete
+              ? AppTheme.success.withValues(alpha: 0.18)
+              : Colors.transparent,
+          width: 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primary.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

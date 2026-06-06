@@ -120,9 +120,15 @@ class _WelfareScreenState extends State<WelfareScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.cardBg,
+        color: AppTheme.surface2,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.border),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primary.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -447,34 +453,11 @@ class _WelfareScreenState extends State<WelfareScreen> {
   }
 
   Widget _emptyState() {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-        child: Center(
-          child: Column(
-            children: [
-              const Icon(
-                Icons.favorite_border,
-                size: 64,
-                color: AppTheme.textLight,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'No welfare contributions yet',
-                style: AppTheme.body.copyWith(
-                  color: AppTheme.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Start contributing to support your members',
-                style: AppTheme.caption.copyWith(
-                  color: AppTheme.textLight,
-                ),
-              ),
-            ],
-          ),
-        ),
+    return const SliverToBoxAdapter(
+      child: AppEmptyState(
+        icon: Icons.favorite_border,
+        title: 'No welfare contributions yet',
+        message: 'Start contributing to support your members in times of need.',
       ),
     );
   }

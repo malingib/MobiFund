@@ -67,7 +67,7 @@ class MpesaService {
   /// Normalize phone number to M-Pesa format (254XXXXXXXXX)
   static String normalizePhoneNumber(String phone) {
     final clean = phone.replaceAll(RegExp(r'[\s\-\+\(\)]'), '');
-    
+
     if (clean.startsWith('254') && clean.length == 12) {
       return clean;
     } else if (clean.startsWith('0') && clean.length == 10) {
@@ -79,7 +79,7 @@ class MpesaService {
     } else if (clean.startsWith('+')) {
       return normalizePhoneNumber(clean.substring(1));
     }
-    
+
     return '254$clean';
   }
 }

@@ -115,9 +115,6 @@ class AppState extends ChangeNotifier {
 
   Future<void> _init() async {
     try {
-      // Initialize Supabase service
-      await SupabaseService().init();
-
       await _loadOrganizations();
       await _loadPlatformAdminStatus();
       await _listenConnectivity();
@@ -1110,9 +1107,12 @@ class AppState extends ChangeNotifier {
     final goal = _goals.firstWhere((g) => g.id == contribution.goalId);
     final newRaisedAmount = goal.raisedAmount + contribution.amount;
     final isNewContributor = !_goalContributions.any(
-      (gc) => gc.goalId == contribution.goalId && gc.memberId == contribution.memberId,
+      (gc) =>
+          gc.goalId == contribution.goalId &&
+          gc.memberId == contribution.memberId,
     );
-    final newContributorCount = isNewContributor ? goal.contributorCount + 1 : goal.contributorCount;
+    final newContributorCount =
+        isNewContributor ? goal.contributorCount + 1 : goal.contributorCount;
 
     String? newStatus = goal.status;
     DateTime? completedAt;

@@ -1,7 +1,7 @@
-# Graph Report - MobiFund  (2026-06-02)
+# Graph Report - MobiFund  (2026-06-05)
 
 ## Corpus Check
-- 72 files · ~129,255 words
+- 72 files · ~129,049 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -59,10 +59,10 @@
 10. `Destroy()` - 6 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `OnCreate()` --calls--> `SetChildContent()`  [INFERRED]
-  windows/runner/flutter_window.cpp → windows/runner/win32_window.cpp
-- `OnCreate()` --calls--> `GetClientArea()`  [INFERRED]
-  windows/runner/flutter_window.cpp → windows/runner/win32_window.cpp
+- `SetChildContent()` --calls--> `OnCreate()`  [INFERRED]
+  windows/runner/win32_window.cpp → windows/runner/flutter_window.cpp
+- `GetClientArea()` --calls--> `OnCreate()`  [INFERRED]
+  windows/runner/win32_window.cpp → windows/runner/flutter_window.cpp
 - `wWinMain()` --calls--> `CreateAndAttachConsole()`  [INFERRED]
   windows/runner/main.cpp → windows/runner/utils.cpp
 - `wWinMain()` --calls--> `GetCommandLineArguments()`  [INFERRED]

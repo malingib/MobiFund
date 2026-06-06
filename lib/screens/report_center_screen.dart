@@ -150,7 +150,8 @@ class _ReportCenterScreenState extends State<ReportCenterScreen> {
                     children: [
                       CircularProgressIndicator(),
                       SizedBox(height: 16),
-                      Text('Generating Report...', style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text('Generating Report...',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
@@ -214,9 +215,15 @@ class _ReportCenterScreenState extends State<ReportCenterScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: AppTheme.cardBg,
+        color: AppTheme.surface2,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.border),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primary.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

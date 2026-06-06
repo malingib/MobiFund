@@ -70,7 +70,8 @@ class _SuperAdminMpesaScreenState extends State<SuperAdminMpesaScreen> {
         backgroundColor: AppTheme.bg,
         appBar: AppBar(title: const Text('M-Pesa (Super Admin)')),
         body: const Center(
-          child: Text('Forbidden', style: TextStyle(color: AppTheme.textSecondary)),
+          child: Text('Forbidden',
+              style: TextStyle(color: AppTheme.textSecondary)),
         ),
       );
     }
@@ -100,7 +101,8 @@ class _SuperAdminMpesaScreenState extends State<SuperAdminMpesaScreen> {
                 decoration: const InputDecoration(labelText: 'Environment'),
                 items: const [
                   DropdownMenuItem(value: 'sandbox', child: Text('Sandbox')),
-                  DropdownMenuItem(value: 'production', child: Text('Production')),
+                  DropdownMenuItem(
+                      value: 'production', child: Text('Production')),
                 ],
                 onChanged: (v) => setState(() => _env = v ?? 'sandbox'),
               ),
@@ -108,7 +110,8 @@ class _SuperAdminMpesaScreenState extends State<SuperAdminMpesaScreen> {
               TextFormField(
                 controller: _consumerKey,
                 decoration: const InputDecoration(labelText: 'Consumer Key'),
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'Required' : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
@@ -127,7 +130,8 @@ class _SuperAdminMpesaScreenState extends State<SuperAdminMpesaScreen> {
                     },
                   ),
                 ),
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'Required' : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
@@ -153,7 +157,8 @@ class _SuperAdminMpesaScreenState extends State<SuperAdminMpesaScreen> {
               TextFormField(
                 controller: _shortcode,
                 decoration: const InputDecoration(labelText: 'Shortcode'),
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'Required' : null,
               ),
               const SizedBox(height: 20),
               SizedBox(
@@ -164,7 +169,8 @@ class _SuperAdminMpesaScreenState extends State<SuperAdminMpesaScreen> {
                       ? const SizedBox(
                           width: 20,
                           height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2.5, color: Colors.white),
                         )
                       : const Text('Save'),
                 ),
@@ -176,4 +182,3 @@ class _SuperAdminMpesaScreenState extends State<SuperAdminMpesaScreen> {
     );
   }
 }
-

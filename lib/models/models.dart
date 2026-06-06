@@ -270,9 +270,10 @@ class OrgMember {
     if (parts.length >= 2 && parts[0].isNotEmpty && parts[1].isNotEmpty) {
       return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
     }
-    return trimmedName.substring(0, trimmedName.length >= 2 ? 2 : 1).toUpperCase();
+    return trimmedName
+        .substring(0, trimmedName.length >= 2 ? 2 : 1)
+        .toUpperCase();
   }
-
 }
 
 // ─────────────────────────────────────────

@@ -14,48 +14,113 @@ class BillingTiersScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppTheme.bg,
-      appBar: AppBar(title: const Text('Plans & Pricing')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            _buildTierCard(
-              context,
-              tier: BillingTier.free,
-              title: 'Free',
-              price: 'KES 0',
-              period: '/ month',
-              features: ['Up to 10 members', 'Basic contributions', 'Manual reports', 'Standard support'],
-              isCurrent: currentTier == BillingTier.free,
-              color: AppTheme.textSecondary,
-              onUpgrade: () => _confirmUpgrade(context, BillingTier.free, 'Free'),
-            ),
-            const SizedBox(height: 20),
-            _buildTierCard(
-              context,
-              tier: BillingTier.pro,
-              title: 'Pro',
-              price: 'KES 2,500',
-              period: '/ month',
-              features: ['Up to 100 members', 'Automated M-Pesa Recon', 'Advanced Analytics', 'Priority SMS Support'],
-              isCurrent: currentTier == BillingTier.pro,
-              isPopular: true,
-              color: AppTheme.primary,
-              onUpgrade: () => _confirmUpgrade(context, BillingTier.pro, 'Pro'),
-            ),
-            const SizedBox(height: 20),
-            _buildTierCard(
-              context,
-              tier: BillingTier.enterprise,
-              title: 'Enterprise',
-              price: 'Custom',
-              period: '',
-              features: ['Unlimited members', 'Custom White-labeling', 'API Integration', 'Dedicated Account Manager'],
-              isCurrent: currentTier == BillingTier.enterprise,
-              color: AppTheme.accent,
-              onUpgrade: () => _confirmUpgrade(context, BillingTier.enterprise, 'Enterprise'),
-            ),
-          ],
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        title: const Text('Plans & Pricing'),
+      ),
+      body: Container(
+        decoration: const BoxDecoration(gradient: AppTheme.softGradient),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 24),
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(22),
+                decoration: BoxDecoration(
+                  gradient: AppTheme.heroGradient,
+                  borderRadius: BorderRadius.circular(28),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.primary.withValues(alpha: 0.18),
+                      blurRadius: 24,
+                      offset: const Offset(0, 12),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Plans that scale with the group',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.4,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Keep the free essentials or move into automation, recon, and richer reporting.',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.82),
+                        fontSize: 13,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 18),
+              _buildTierCard(
+                context,
+                tier: BillingTier.free,
+                title: 'Free',
+                price: 'KES 0',
+                period: '/ month',
+                features: [
+                  'Up to 10 members',
+                  'Basic contributions',
+                  'Manual reports',
+                  'Standard support'
+                ],
+                isCurrent: currentTier == BillingTier.free,
+                color: AppTheme.textSecondary,
+                onUpgrade: () =>
+                    _confirmUpgrade(context, BillingTier.free, 'Free'),
+              ),
+              const SizedBox(height: 18),
+              _buildTierCard(
+                context,
+                tier: BillingTier.pro,
+                title: 'Pro',
+                price: 'KES 2,500',
+                period: '/ month',
+                features: [
+                  'Up to 100 members',
+                  'Automated M-Pesa Recon',
+                  'Advanced Analytics',
+                  'Priority SMS Support'
+                ],
+                isCurrent: currentTier == BillingTier.pro,
+                isPopular: true,
+                color: AppTheme.primary,
+                onUpgrade: () =>
+                    _confirmUpgrade(context, BillingTier.pro, 'Pro'),
+              ),
+              const SizedBox(height: 18),
+              _buildTierCard(
+                context,
+                tier: BillingTier.enterprise,
+                title: 'Enterprise',
+                price: 'Custom',
+                period: '',
+                features: [
+                  'Unlimited members',
+                  'Custom White-labeling',
+                  'API Integration',
+                  'Dedicated Account Manager'
+                ],
+                isCurrent: currentTier == BillingTier.enterprise,
+                color: AppTheme.accent,
+                onUpgrade: () => _confirmUpgrade(
+                    context, BillingTier.enterprise, 'Enterprise'),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -75,19 +140,14 @@ class BillingTiersScreen extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.cardBg,
+        color: AppTheme.surface2,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: isPopular ? AppTheme.primary : AppTheme.border,
-          width: isPopular ? 2 : 1,
-        ),
         boxShadow: [
-          if (isPopular)
-            BoxShadow(
-              color: AppTheme.primary.withValues(alpha: 0.1),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            ),
+          BoxShadow(
+            color: AppTheme.primary.withValues(alpha: 0.05),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
         ],
       ),
       child: Column(
@@ -96,9 +156,9 @@ class BillingTiersScreen extends StatelessWidget {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 8),
-              decoration: const BoxDecoration(
-                color: AppTheme.primary,
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                color: AppTheme.primary.withValues(alpha: 0.92),
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(22),
                   topRight: Radius.circular(22),
                 ),
@@ -106,7 +166,11 @@ class BillingTiersScreen extends StatelessWidget {
               child: const Text(
                 'MOST POPULAR',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1),
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1),
               ),
             ),
           Padding(
@@ -117,17 +181,27 @@ class BillingTiersScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(title, style: AppTheme.headline.copyWith(color: color)),
+                    Text(
+                      title,
+                      style: AppTheme.headline.copyWith(
+                        color: color,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                     if (isCurrent)
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
                           color: AppTheme.success.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: const Text(
                           'Current Plan',
-                          style: TextStyle(color: AppTheme.success, fontSize: 10, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              color: AppTheme.success,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold),
                         ),
                       ),
                   ],
@@ -136,7 +210,13 @@ class BillingTiersScreen extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(price, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                    Text(
+                      price,
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 4, left: 2),
                       child: Text(period, style: AppTheme.caption),
@@ -148,9 +228,12 @@ class BillingTiersScreen extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 12),
                       child: Row(
                         children: [
-                          const Icon(Icons.check_circle, color: AppTheme.success, size: 18),
+                          const Icon(Icons.check_circle,
+                              color: AppTheme.success, size: 18),
                           const SizedBox(width: 12),
-                          Expanded(child: Text(f, style: AppTheme.body.copyWith(fontSize: 14))),
+                          Expanded(
+                              child: Text(f,
+                                  style: AppTheme.body.copyWith(fontSize: 14))),
                         ],
                       ),
                     )),
@@ -160,15 +243,20 @@ class BillingTiersScreen extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: isCurrent ? null : onUpgrade,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: isPopular ? AppTheme.primary : AppTheme.surface,
-                      foregroundColor: isPopular ? Colors.white : AppTheme.textPrimary,
+                      backgroundColor:
+                          isPopular ? AppTheme.primary : AppTheme.surface,
+                      foregroundColor:
+                          isPopular ? Colors.white : AppTheme.textPrimary,
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18)),
                     ),
                     child: Text(
                       isCurrent
                           ? 'Current'
-                          : (tier == BillingTier.free ? 'Switch to Free' : 'Upgrade to $title'),
+                          : (tier == BillingTier.free
+                              ? 'Switch to Free'
+                              : 'Upgrade to $title'),
                     ),
                   ),
                 ),

@@ -33,38 +33,43 @@ class MemberDetailScreen extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 220,
+            expandedHeight: 250,
             floating: false,
             pinned: true,
-            backgroundColor: AppTheme.bg,
+            backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
-                padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
+                padding: const EdgeInsets.fromLTRB(20, 70, 20, 20),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppTheme.primary,
-                      AppTheme.primary.withValues(alpha: 0.7)
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  gradient: AppTheme.heroGradient,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    MemberAvatar(
-                      initials: member.name.substring(0, 1).toUpperCase(),
-                      size: 64,
-                      color: Colors.white,
+                    Container(
+                      width: 74,
+                      height: 74,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.12),
+                        ),
+                      ),
+                      child: MemberAvatar(
+                        initials: member.name.substring(0, 1).toUpperCase(),
+                        size: 74,
+                        color: Colors.white,
+                      ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 14),
                     Text(
                       member.name,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.4,
                       ),
                     ),
                     if (member.phone != null) ...[
@@ -77,6 +82,17 @@ class MemberDetailScreen extends StatelessWidget {
                         ),
                       ),
                     ],
+                    const SizedBox(height: 16),
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      alignment: WrapAlignment.center,
+                      children: const [
+                        _MemberHeaderPill(label: 'Member detail'),
+                        _MemberHeaderPill(label: 'History'),
+                        _MemberHeaderPill(label: 'Live totals'),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -93,8 +109,15 @@ class MemberDetailScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: AppTheme.cardBg,
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(24),
                       border: Border.all(color: AppTheme.border),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.primary.withValues(alpha: 0.06),
+                          blurRadius: 18,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
                     ),
                     child: Column(
                       children: [
@@ -130,7 +153,7 @@ class MemberDetailScreen extends StatelessWidget {
                     'Contribution History',
                     style: AppTheme.headline.copyWith(
                       fontSize: 18,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -145,7 +168,8 @@ class MemberDetailScreen extends StatelessWidget {
                                 size: 64, color: AppTheme.textLight),
                             SizedBox(height: 16),
                             Text('No contributions yet',
-                                style: TextStyle(color: AppTheme.textSecondary)),
+                                style:
+                                    TextStyle(color: AppTheme.textSecondary)),
                           ],
                         ),
                       ),
@@ -199,9 +223,15 @@ class MemberDetailScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.cardBg,
+        color: AppTheme.surface2,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.border),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primary.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -252,6 +282,32 @@ class MemberDetailScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _MemberHeaderPill extends StatelessWidget {
+  final String label;
+
+  const _MemberHeaderPill({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.14)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: Colors.white.withValues(alpha: 0.92),
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     );
   }

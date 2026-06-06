@@ -4,13 +4,13 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Mobiwave SMS Service
-/// 
+///
 /// Provides SMS functionality using Mobiwave Innovations SMS API
 /// Documentation: https://sms.mobiwave.co.ke/api/v3/
 class SmsService {
   // Base URL for Mobiwave SMS API
   static const String _baseUrl = 'https://sms.mobiwave.co.ke/api/v3';
-  
+
   // API credentials - Store these securely in production
   static const String _defaultApiKey = 'YOUR_MOBIWAVE_API_KEY';
   static const String _defaultSenderId = 'Mobifund';
@@ -29,11 +29,11 @@ class SmsService {
   }
 
   /// Send a single SMS message
-  /// 
+  ///
   /// [recipient] - Phone number (with country code, e.g., 254712345678)
   /// [message] - SMS message content
   /// [senderId] - Optional custom sender ID (defaults to 'Mobifund')
-  /// 
+  ///
   /// Returns true if successful, false otherwise
   static Future<SmsResult> sendSms({
     required String recipient,
@@ -69,7 +69,7 @@ class SmsService {
       );
 
       final data = jsonDecode(response.body);
-      
+
       if (response.statusCode == 200 && data['status'] == 'success') {
         debugPrint('SMS sent successfully to $recipient');
         return SmsResult(
@@ -94,7 +94,7 @@ class SmsService {
   }
 
   /// Send SMS to multiple recipients
-  /// 
+  ///
   /// [recipients] - List of phone numbers
   /// [message] - SMS message content
   /// [senderId] - Optional custom sender ID
@@ -139,9 +139,10 @@ class SmsService {
       );
 
       final data = jsonDecode(response.body);
-      
+
       if (response.statusCode == 200 && data['status'] == 'success') {
-        debugPrint('Bulk SMS sent successfully to ${recipients.length} recipients');
+        debugPrint(
+            'Bulk SMS sent successfully to ${recipients.length} recipients');
         return SmsResult(
           success: true,
           messageId: data['data']?['id']?.toString(),
@@ -164,7 +165,7 @@ class SmsService {
   }
 
   /// Send SMS campaign to contact lists
-  /// 
+  ///
   /// [contactListIds] - List of contact list IDs
   /// [message] - SMS message content
   /// [senderId] - Optional custom sender ID
@@ -209,9 +210,10 @@ class SmsService {
       );
 
       final data = jsonDecode(response.body);
-      
+
       if (response.statusCode == 200 && data['status'] == 'success') {
-        debugPrint('Campaign sent successfully to ${contactListIds.length} lists');
+        debugPrint(
+            'Campaign sent successfully to ${contactListIds.length} lists');
         return SmsResult(
           success: true,
           messageId: data['data']?['id']?.toString(),
@@ -234,7 +236,7 @@ class SmsService {
   }
 
   /// Schedule SMS for later delivery
-  /// 
+  ///
   /// [recipient] - Phone number
   /// [message] - SMS message content
   /// [scheduleTime] - DateTime when SMS should be sent
@@ -275,7 +277,7 @@ class SmsService {
       );
 
       final data = jsonDecode(response.body);
-      
+
       if (response.statusCode == 200 && data['status'] == 'success') {
         debugPrint('SMS scheduled for ${scheduleTime.toString()}');
         return SmsResult(
@@ -284,7 +286,8 @@ class SmsService {
           message: 'SMS scheduled successfully',
         );
       } else {
-        debugPrint('Schedule SMS failed: ${data['message'] ?? 'Unknown error'}');
+        debugPrint(
+            'Schedule SMS failed: ${data['message'] ?? 'Unknown error'}');
         return SmsResult(
           success: false,
           message: data['message'] ?? 'Failed to schedule SMS',
@@ -308,7 +311,8 @@ class SmsService {
         return SmsStatusResult(
           success: false,
           status: 'error',
-          message: 'SMS is not configured. Add your Mobiwave API key in Settings.',
+          message:
+              'SMS is not configured. Add your Mobiwave API key in Settings.',
         );
       }
 
@@ -321,7 +325,7 @@ class SmsService {
       );
 
       final data = jsonDecode(response.body);
-      
+
       if (response.statusCode == 200 && data['status'] == 'success') {
         return SmsStatusResult(
           success: true,
@@ -481,7 +485,20 @@ class SmsTemplates {
   }
 
   static String _formatDate(DateTime dt) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
     return '${dt.day} ${months[dt.month - 1]} ${dt.year}';
   }
 

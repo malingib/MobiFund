@@ -23,15 +23,16 @@ class StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         gradient: gradient,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primary.withValues(alpha: 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
+            color: AppTheme.primary.withValues(alpha: 0.18),
+            blurRadius: 18,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -42,21 +43,21 @@ class StatCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(9),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, color: Colors.white, size: 20),
+                child: Icon(icon, color: Colors.white, size: 19),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Text(
             value,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 24,
+              fontSize: 23,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -96,14 +97,14 @@ class SectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.cardBg,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.border),
+        color: AppTheme.surface2,
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        border: Border.all(color: AppTheme.border.withValues(alpha: 0.78)),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primary.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: AppTheme.primary.withValues(alpha: 0.05),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -111,10 +112,7 @@ class SectionCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
-            decoration: const BoxDecoration(
-              border: Border(bottom: BorderSide(color: AppTheme.border)),
-            ),
+            padding: const EdgeInsets.fromLTRB(18, 16, 18, 12),
             child: Row(
               children: [
                 Expanded(
@@ -127,6 +125,7 @@ class SectionCard extends StatelessWidget {
               ],
             ),
           ),
+          const Divider(height: 1, thickness: 0.6, color: AppTheme.border),
           Padding(padding: padding, child: child),
         ],
       ),
@@ -198,10 +197,10 @@ class AppBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = isExpense ? AppTheme.danger : AppTheme.success;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(999),
         border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(
@@ -246,10 +245,11 @@ class AppTextField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label.toUpperCase(),
+          label,
           style: AppTheme.caption.copyWith(
             fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
+            letterSpacing: 0.3,
+            color: AppTheme.textSecondary,
           ),
         ),
         const SizedBox(height: 8),
@@ -304,17 +304,18 @@ class AppDropdown<T> extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label.toUpperCase(),
+          label,
           style: AppTheme.caption.copyWith(
             fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
+            letterSpacing: 0.3,
+            color: AppTheme.textSecondary,
           ),
         ),
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
             color: AppTheme.surface,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
             border: Border.all(color: AppTheme.border),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -366,20 +367,23 @@ class QuickActionButton extends StatelessWidget {
         AppHaptics.light();
         onTap();
       },
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
         decoration: BoxDecoration(
-          color: (color ?? AppTheme.primary).withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(16),
+          color: (color ?? AppTheme.primary).withValues(alpha: 0.07),
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          border: Border.all(
+            color: (color ?? AppTheme.primary).withValues(alpha: 0.10),
+          ),
         ),
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(9),
               decoration: BoxDecoration(
                 color: color ?? AppTheme.primary,
-                shape: BoxShape.circle,
+                borderRadius: BorderRadius.circular(14),
                 boxShadow: [
                   BoxShadow(
                     color: (color ?? AppTheme.primary).withValues(alpha: 0.3),
@@ -428,14 +432,15 @@ class BalanceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
         gradient: AppTheme.primaryGradient,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primary.withValues(alpha: 0.4),
-            blurRadius: 20,
+            color: AppTheme.primary.withValues(alpha: 0.28),
+            blurRadius: 18,
             offset: const Offset(0, 10),
           ),
         ],
@@ -450,7 +455,7 @@ class BalanceCard extends StatelessWidget {
                 title,
                 style: const TextStyle(
                   color: Colors.white70,
-                  fontSize: 14,
+                  fontSize: 13,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -485,9 +490,9 @@ class BalanceCard extends StatelessWidget {
             amount,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 36,
+              fontSize: 34,
               fontWeight: FontWeight.w700,
-              letterSpacing: -1,
+              letterSpacing: -0.8,
             ),
           ),
           if (subtitle != null) ...[
@@ -545,27 +550,30 @@ class DashboardSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const SingleChildScrollView(
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.all(AppTheme.pagePadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AppSkeleton(width: double.infinity, height: 180, borderRadius: 24),
+          AppSkeleton(width: double.infinity, height: 180, borderRadius: 28),
           SizedBox(height: 24),
           Row(
             children: [
-              Expanded(child: AppSkeleton(width: 100, height: 80, borderRadius: 16)),
+              Expanded(
+                  child: AppSkeleton(width: 100, height: 80, borderRadius: 18)),
               SizedBox(width: 12),
-              Expanded(child: AppSkeleton(width: 100, height: 80, borderRadius: 16)),
+              Expanded(
+                  child: AppSkeleton(width: 100, height: 80, borderRadius: 18)),
               SizedBox(width: 12),
-              Expanded(child: AppSkeleton(width: 100, height: 80, borderRadius: 16)),
+              Expanded(
+                  child: AppSkeleton(width: 100, height: 80, borderRadius: 18)),
             ],
           ),
           SizedBox(height: 24),
           AppSkeleton(width: 150, height: 24),
           SizedBox(height: 12),
-          AppSkeleton(width: double.infinity, height: 200, borderRadius: 16),
+          AppSkeleton(width: double.infinity, height: 200, borderRadius: 20),
           SizedBox(height: 16),
-          AppSkeleton(width: double.infinity, height: 200, borderRadius: 16),
+          AppSkeleton(width: double.infinity, height: 200, borderRadius: 20),
         ],
       ),
     );
@@ -618,7 +626,8 @@ class GridSkeleton extends StatelessWidget {
         childAspectRatio: 0.9,
       ),
       itemCount: 6,
-      itemBuilder: (context, index) => const AppSkeleton(width: 100, height: 100, borderRadius: 20),
+      itemBuilder: (context, index) =>
+          const AppSkeleton(width: 100, height: 100, borderRadius: 20),
     );
   }
 }
@@ -633,3 +642,543 @@ String formatKes(double amount) {
 String formatDate(DateTime d) => DateFormat('dd MMM yyyy').format(d);
 
 String formatShortDate(DateTime d) => DateFormat('dd MMM').format(d);
+
+// ─────────────────────────────────────────
+// QUICK STAT TILE
+// A small icon + value + label card. Used for the dashboard's three
+// "Members / Activity / Growth" tiles. Designed to be read as a single
+// "Members, 12" announcement by TalkBack.
+// ─────────────────────────────────────────
+class AppQuickStatTile extends StatelessWidget {
+  final String label;
+  final String value;
+  final IconData icon;
+  final Color color;
+  final VoidCallback? onTap;
+
+  const AppQuickStatTile({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.icon,
+    this.color = AppTheme.primary,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      container: true,
+      button: onTap != null,
+      label: '$label, $value',
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap == null
+              ? null
+              : () {
+                  AppHaptics.selection();
+                  AppHaptics.light();
+                  onTap!();
+                },
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          child: Container(
+            padding: const EdgeInsets.all(AppSpacing.lg - 2),
+            decoration: BoxDecoration(
+              color: AppTheme.surface2,
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              border: Border.all(
+                color: AppTheme.border.withValues(alpha: 0.72),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: color.withValues(alpha: 0.06),
+                  blurRadius: 12,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(AppSpacing.sm + 2),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.10),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSm + 2),
+                  ),
+                  child: Icon(icon, color: color, size: AppIconSize.md),
+                ),
+                const SizedBox(height: AppSpacing.sm + 2),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xs / 2),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppTheme.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────
+// ACTION TILE
+// A row tile with icon, title, subtitle, and trailing chevron.
+// Used for navigation entries (Reports, M-Pesa Recon, etc.).
+// ─────────────────────────────────────────
+class AppActionTile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Color color;
+  final VoidCallback onTap;
+  final bool enabled;
+
+  const AppActionTile({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.color,
+    required this.onTap,
+    this.enabled = true,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final effectiveColor = enabled ? color : AppTheme.textLight;
+    return MergeSemantics(
+      child: Semantics(
+        button: true,
+        enabled: enabled,
+        label: '$title. $subtitle',
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: enabled
+                ? () {
+                    AppHaptics.selection();
+                    onTap();
+                  }
+                : null,
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+            child: Container(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              decoration: BoxDecoration(
+                color: AppTheme.surface2,
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                border: Border.all(
+                  color: AppTheme.border.withValues(alpha: 0.78),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(AppSpacing.sm + 2),
+                    decoration: BoxDecoration(
+                      color: effectiveColor.withValues(alpha: 0.10),
+                      borderRadius:
+                          BorderRadius.circular(AppTheme.radiusSm + 2),
+                    ),
+                    child: Icon(icon,
+                        color: effectiveColor, size: AppIconSize.md - 2),
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                            color: AppTheme.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.xs / 2),
+                        Text(
+                          subtitle,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppTheme.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const ExcludeSemantics(
+                    child: Icon(
+                      Icons.chevron_right,
+                      color: AppTheme.textLight,
+                      size: AppIconSize.md,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────
+// ANALYTICS CARD
+// Titled card for chart / list content. Used in the dashboard's
+// "Analytics" section (Income vs Expenses, Top Contributors, etc.).
+// ─────────────────────────────────────────
+class AppAnalyticsCard extends StatelessWidget {
+  final String title;
+  final Widget content;
+  final EdgeInsets padding;
+
+  const AppAnalyticsCard({
+    super.key,
+    required this.title,
+    required this.content,
+    this.padding = const EdgeInsets.all(AppSpacing.lg + 2),
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: padding,
+      decoration: BoxDecoration(
+        color: AppTheme.surface2,
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        border: Border.all(
+          color: AppTheme.border.withValues(alpha: 0.72),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.035),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.textPrimary,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg - 2),
+          content,
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────
+// STATE WIDGETS — loading / empty / error / offline
+// A single source of truth for "there's nothing to show."
+// Calm, descriptive microcopy. Linear/Stripe tone.
+// ─────────────────────────────────────────
+
+/// Centered icon + title + body + optional CTA, wrapped in a single
+/// Semantics block so TalkBack reads it as one coherent announcement.
+class AppEmptyState extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String? message;
+  final Widget? action;
+  final String? semanticLabel;
+  final Color? tint;
+
+  const AppEmptyState({
+    super.key,
+    required this.icon,
+    required this.title,
+    this.message,
+    this.action,
+    this.semanticLabel,
+    this.tint,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = tint ?? AppTheme.primary;
+    final label =
+        semanticLabel ?? ([title, if (message != null) message!].join('. '));
+
+    return Center(
+      child: Semantics(
+        container: true,
+        label: label,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.xl,
+            vertical: AppSpacing.xxl,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: 0.10),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                  border: Border.all(
+                    color: accent.withValues(alpha: 0.18),
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: Icon(
+                  icon,
+                  size: AppIconSize.xl,
+                  color: accent,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              Text(
+                title,
+                style: AppTheme.headline,
+                textAlign: TextAlign.center,
+              ),
+              if (message != null) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  message!,
+                  style: AppTheme.body.copyWith(
+                    color: AppTheme.textSecondary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+              if (action != null) ...[
+                const SizedBox(height: AppSpacing.xl),
+                action!,
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Inline error state with an optional retry CTA.
+/// Default copy is generic on purpose — the screen can pass a custom
+/// [title] / [message] via the dedicated constructor if needed.
+class AppErrorState extends StatelessWidget {
+  final Object? error;
+  final VoidCallback? onRetry;
+  final String title;
+  final String message;
+  final IconData icon;
+
+  const AppErrorState({
+    super.key,
+    this.error,
+    this.onRetry,
+    this.title = 'Something went wrong.',
+    this.message =
+        "We couldn't load this. Check your connection and try again.",
+    this.icon = Icons.error_outline_rounded,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AppEmptyState(
+      icon: icon,
+      tint: AppTheme.danger,
+      title: title,
+      message: message,
+      semanticLabel: '$title. $message',
+      action: onRetry == null
+          ? null
+          : ElevatedButton.icon(
+              onPressed: () {
+                AppHaptics.medium();
+                onRetry!();
+              },
+              icon: const Icon(Icons.refresh_rounded, size: AppIconSize.sm),
+              label: const Text('Try again'),
+            ),
+    );
+  }
+}
+
+/// Offline state. Pass [onRetry] to wire a "Retry" button.
+class AppOfflineState extends StatelessWidget {
+  final VoidCallback? onRetry;
+  const AppOfflineState({super.key, this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppEmptyState(
+      icon: Icons.cloud_off_outlined,
+      tint: AppTheme.textSecondary,
+      title: "You're offline.",
+      message: 'Showing your last saved data. Reconnect to sync this group.',
+      semanticLabel: "You're offline. Showing your last saved data.",
+      action: onRetry == null
+          ? null
+          : OutlinedButton.icon(
+              onPressed: () {
+                AppHaptics.medium();
+                onRetry!();
+              },
+              icon: const Icon(Icons.refresh_rounded, size: AppIconSize.sm),
+              label: const Text('Try again'),
+            ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────
+// SCREEN SCAFFOLD — safe area + refresh + padding
+// ─────────────────────────────────────────
+class AppScreenScaffold extends StatelessWidget {
+  final Widget child;
+  final Future<void> Function()? onRefresh;
+  final EdgeInsets padding;
+  final ScrollPhysics? physics;
+  final ScrollController? controller;
+  final bool fillHeight;
+
+  const AppScreenScaffold({
+    super.key,
+    required this.child,
+    this.onRefresh,
+    this.padding = AppSpacing.pagePadding,
+    this.physics = const AlwaysScrollableScrollPhysics(),
+    this.controller,
+    this.fillHeight = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final scroll = SingleChildScrollView(
+      physics: physics,
+      controller: controller,
+      padding: padding,
+      child: child,
+    );
+
+    if (onRefresh == null) return scroll;
+
+    return RefreshIndicator(
+      color: AppTheme.primary,
+      backgroundColor: AppTheme.surface2,
+      onRefresh: onRefresh!,
+      child: scroll,
+    );
+  }
+}
+
+// ─────────────────────────────────────────
+// LIST VIEW — one widget for loading / empty / error / offline / ready
+// Use this for simple ListView bodies. Sliver-based screens keep their
+// existing CustomScrollView structure and use AppEmptyState / ListSkeleton
+// directly inside SliverFillRemaining.
+// ─────────────────────────────────────────
+enum AppListStatus { loading, empty, error, offline, ready }
+
+class AppListView<T> extends StatelessWidget {
+  final AppListStatus status;
+  final List<T> items;
+  final Widget Function(T item, int index) itemBuilder;
+  final AppEmptyState? empty;
+  final Object? error;
+  final VoidCallback? onRetry;
+  final Widget? loading;
+  final EdgeInsets padding;
+  final ScrollViewKeyboardDismissBehavior keyboardDismissBehavior;
+  final bool refreshable;
+  final Future<void> Function()? onRefresh;
+  final Widget? separator;
+  final ScrollPhysics? physics;
+  final ScrollController? controller;
+
+  const AppListView({
+    super.key,
+    required this.status,
+    required this.items,
+    required this.itemBuilder,
+    this.empty,
+    this.error,
+    this.onRetry,
+    this.loading,
+    this.padding = AppSpacing.pagePadding,
+    this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.onDrag,
+    this.refreshable = false,
+    this.onRefresh,
+    this.separator,
+    this.physics,
+    this.controller,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    switch (status) {
+      case AppListStatus.loading:
+        return loading ?? const ListSkeleton();
+      case AppListStatus.empty:
+        return empty ??
+            const AppEmptyState(
+              icon: Icons.inbox_outlined,
+              title: 'Nothing here yet',
+              message: 'When you add something, it will show up here.',
+            );
+      case AppListStatus.error:
+        return AppErrorState(error: error, onRetry: onRetry);
+      case AppListStatus.offline:
+        return AppOfflineState(onRetry: onRetry);
+      case AppListStatus.ready:
+        if (items.isEmpty) {
+          return empty ??
+              const AppEmptyState(
+                icon: Icons.inbox_outlined,
+                title: 'Nothing here yet',
+                message: 'When you add something, it will show up here.',
+              );
+        }
+        final list = ListView.separated(
+          physics: physics,
+          controller: controller,
+          keyboardDismissBehavior: keyboardDismissBehavior,
+          padding: padding,
+          itemCount: items.length,
+          itemBuilder: (context, index) => itemBuilder(items[index], index),
+          separatorBuilder: (context, _) =>
+              separator ?? const SizedBox(height: AppSpacing.md),
+        );
+        if (!refreshable || onRefresh == null) return list;
+        return RefreshIndicator(
+          color: AppTheme.primary,
+          backgroundColor: AppTheme.surface2,
+          onRefresh: onRefresh!,
+          child: list,
+        );
+    }
+  }
+}

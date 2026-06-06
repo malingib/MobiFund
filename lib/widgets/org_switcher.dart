@@ -53,9 +53,15 @@ class OrganizationSwitcher extends StatelessWidget {
               constraints: BoxConstraints(maxWidth: constraints.maxWidth),
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: AppTheme.surface,
+                color: AppTheme.surface2,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AppTheme.border, width: 0.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primary.withValues(alpha: 0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
               child: const Center(
                 child: Icon(
@@ -73,9 +79,15 @@ class OrganizationSwitcher extends StatelessWidget {
               constraints: BoxConstraints(maxWidth: constraints.maxWidth),
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
               decoration: BoxDecoration(
-                color: AppTheme.surface,
+                color: AppTheme.surface2,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AppTheme.border),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primary.withValues(alpha: 0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -117,28 +129,34 @@ class OrganizationSwitcher extends StatelessWidget {
 
           return Container(
             constraints: BoxConstraints(maxWidth: maxW),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
             decoration: BoxDecoration(
-              color: AppTheme.surface,
+              color: AppTheme.surface2,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppTheme.border),
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primary.withValues(alpha: 0.04),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(6),
+                  padding: const EdgeInsets.all(5),
                   decoration: BoxDecoration(
                     gradient: AppTheme.primaryGradient,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(7),
                   ),
                   child: const Icon(
                     Icons.business,
                     color: Colors.white,
-                    size: 16,
+                    size: 15,
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 6),
                 Flexible(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -147,7 +165,7 @@ class OrganizationSwitcher extends StatelessWidget {
                       Text(
                         currentOrg?.name ?? 'Select Organization',
                         style: const TextStyle(
-                          fontSize: 11,
+                          fontSize: 10.5,
                           fontWeight: FontWeight.w600,
                           color: AppTheme.textPrimary,
                         ),
@@ -157,7 +175,7 @@ class OrganizationSwitcher extends StatelessWidget {
                       Text(
                         '${state.organizations.length} organization${state.organizations.length != 1 ? 's' : ''}',
                         style: const TextStyle(
-                          fontSize: 9,
+                          fontSize: 8.5,
                           color: AppTheme.textSecondary,
                         ),
                         maxLines: 1,
@@ -169,7 +187,7 @@ class OrganizationSwitcher extends StatelessWidget {
                 const Icon(
                   Icons.keyboard_arrow_down,
                   color: AppTheme.textSecondary,
-                  size: 16,
+                  size: 15,
                 ),
               ],
             ),
@@ -190,7 +208,7 @@ class OrganizationSwitcher extends StatelessWidget {
           color: AppTheme.bg,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,

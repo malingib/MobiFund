@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-06T00:00:00Z",
+  "title": "Design System: MobiFund",
+  "extensions": {
+    "colorMeta": {
+      "primary":        { "role": "primary",  "displayName": "Deep Forest Teal", "canonical": "#0D7168", "tonalRamp": ["#03201D", "#063430", "#094943", "#0D7168", "#1A8A7F", "#38B2A3", "#7CD0C2", "#C9EBE3"] },
+      "primary-deep":   { "role": "primary",  "displayName": "Forest Deep",      "canonical": "#094943", "tonalRamp": ["#03201D", "#063430", "#094943", "#0A5C53", "#0D7168", "#1A8A7F", "#38B2A3", "#7CD0C2"] },
+      "primary-light":  { "role": "primary",  "displayName": "Lichen",           "canonical": "#38B2A3", "tonalRamp": ["#063430", "#0D7168", "#1A8A7F", "#38B2A3", "#6BC4B7", "#9CD7CC", "#C9EBE3", "#E5F4F0"] },
+      "accent":         { "role": "accent",   "displayName": "Warm Brass",       "canonical": "#D9AE4A", "tonalRamp": ["#3D2E0F", "#7A5C1E", "#B6872E", "#D9AE4A", "#E5C271", "#EDD498", "#F4E2BC", "#FAF1DE"] },
+      "accent-mint":    { "role": "accent",   "displayName": "Soft Mint",        "canonical": "#8AD7AE", "tonalRamp": ["#1F4A38", "#3F765F", "#5FA285", "#8AD7AE", "#A6E1C2", "#C2EAD5", "#DCF3E6", "#EEFAF3"] },
+      "surface":        { "role": "neutral",  "displayName": "Paper",            "canonical": "#F4F7F3", "tonalRamp": ["#E0E5E1", "#E5EAE6", "#EBF0EC", "#F0F4F0", "#F4F7F3", "#F8FAF7", "#FBFCFB", "#FDFDFD"] },
+      "surface-elevated":{ "role": "neutral", "displayName": "Linen",            "canonical": "#FCFDFB", "tonalRamp": ["#E0E5E1", "#EBF0EC", "#F0F4F0", "#F8FAF7", "#FCFDFB", "#FCFDFB", "#FCFDFB", "#FFFFFF"] },
+      "surface-card":   { "role": "neutral",  "displayName": "Bone",             "canonical": "#FFFFFF", "tonalRamp": ["#E5EAE6", "#EBF0EC", "#F0F4F0", "#F8FAF7", "#FCFDFB", "#FFFFFF", "#FFFFFF", "#FFFFFF"] },
+      "surface-border": { "role": "neutral",  "displayName": "Edge",             "canonical": "#D9E4DD", "tonalRamp": ["#A8B5AE", "#B9C5BE", "#CAD5CE", "#D9E4DD", "#E0E8E2", "#E7EEE9", "#EEF3F0", "#F4F7F5"] },
+      "brand-ink":      { "role": "neutral",  "displayName": "Ink",              "canonical": "#17312D", "tonalRamp": ["#0A1311", "#102221", "#17312D", "#244441", "#3A5A56", "#55716D", "#718884", "#8A9D99"] },
+      "text-primary":   { "role": "neutral",  "displayName": "Ink (text)",       "canonical": "#17312D", "tonalRamp": ["#0A1311", "#102221", "#17312D", "#244441", "#3A5A56", "#55716D", "#718884", "#8A9D99"] },
+      "text-secondary": { "role": "neutral",  "displayName": "Ash",              "canonical": "#5A6964", "tonalRamp": ["#2A3431", "#3F4945", "#5A6964", "#737F7B", "#8C9592", "#A4ABA9", "#BBC1BF", "#D2D6D5"] },
+      "text-muted":     { "role": "neutral",  "displayName": "Mist",             "canonical": "#8A9792", "tonalRamp": ["#4A5753", "#5A6964", "#737F7B", "#8A9792", "#9FA9A5", "#B4BCB9", "#C9CFCD", "#DEE2E0"] },
+      "success":        { "role": "success",  "displayName": "Success Green",    "canonical": "#169A6A", "tonalRamp": ["#07301F", "#0E5A3D", "#127F56", "#169A6A", "#43B585", "#70CFA1", "#9DE0BD", "#C9EFD9"] },
+      "danger":         { "role": "danger",   "displayName": "Danger Coral",     "canonical": "#E25555", "tonalRamp": ["#4F1313", "#8A2727", "#BC3D3D", "#E25555", "#EA7A7A", "#F19E9E", "#F7C2C2", "#FBE0E0"] },
+      "warning":        { "role": "warning",  "displayName": "Warning Amber",    "canonical": "#E3A61B", "tonalRamp": ["#5C4308", "#9B6F0F", "#C28B15", "#E3A61B", "#EBBA47", "#F1CD78", "#F7DFA5", "#FBEFD2"] },
+      "info":           { "role": "info",     "displayName": "Info Blue",        "canonical": "#2F80ED", "tonalRamp": ["#0F2747", "#194A7A", "#246DAD", "#2F80ED", "#5C9DF3", "#88B9F6", "#B3D2F9", "#DBE9FC"] },
+      "dark-card":      { "role": "neutral",  "displayName": "Dark Card",        "canonical": "#12302B", "tonalRamp": ["#06130F", "#0C1F1B", "#12302B", "#1A413B", "#23524B", "#2C635B", "#3B7770", "#4F8C85"] }
+    },
+    "typographyMeta": {
+      "display":   { "displayName": "Display",  "purpose": "Hero numbers — the dashboard balance, the confirmation amount. One per screen." },
+      "headline":  { "displayName": "Headline", "purpose": "Card titles, section headers, the org name in the hero." },
+      "title":     { "displayName": "Title",    "purpose": "Tile labels, action-tile titles, button text. Dominant weight in lists." },
+      "body":      { "displayName": "Body",     "purpose": "Descriptions, member names, supporting copy. Never below 13px." },
+      "caption":   { "displayName": "Caption",  "purpose": "Status badges, timestamps, the Live/Online pill. May be uppercase; never full sentences." }
+    },
+    "shadows": [
+      { "name": "card-ambient",  "value": "0 8px 18px rgba(13,113,104,0.05)",  "purpose": "Default on cards above the body. Almost imperceptible." },
+      { "name": "card-lifted",   "value": "0 10px 18px rgba(13,113,104,0.06)", "purpose": "Card on hover or when it's the focal element." },
+      { "name": "hero-glow",     "value": "0 14px 28px rgba(13,113,104,0.16)", "purpose": "Dashboard's hero header and balance card. The only brand-colored shadow." },
+      { "name": "fab-shadow",    "value": "0 8px 18px rgba(13,113,104,0.18)",  "purpose": "Floating action button. Confirms the pressable affordance." }
+    ],
+    "motion": [
+      { "name": "duration-micro",   "value": "120ms",     "purpose": "Hovers, micro feedback." },
+      { "name": "duration-fast",    "value": "200ms",     "purpose": "Button press, small state changes." },
+      { "name": "duration-base",    "value": "280ms",     "purpose": "Page transitions, card reveals." },
+      { "name": "duration-slow",    "value": "420ms",     "purpose": "Hero animations, list stagger." },
+      { "name": "curve-emphasized", "value": "cubic-bezier(0.2, 0.0, 0.0, 1.0)", "purpose": "Reverse curve for dismiss / back transitions." },
+      { "name": "curve-standard",   "value": "easeOutCubic", "purpose": "Default easing for state transitions." },
+      { "name": "curve-decelerate", "value": "easeOutQuart", "purpose": "Slower entries — hero reveals, list staggers." }
+    ],
+    "breakpoints": [
+      { "name": "narrow",   "value": "<560px" },
+      { "name": "standard", "value": "560-1120px" },
+      { "name": "wide",     "value": "≥1120px (contentWidth caps at 1080px)" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "framework": "flutter",
+      "description": "Filled CTA. The loudest thing on the screen. Always one per surface area.",
+      "code": "ElevatedButton(\n  style: ElevatedButton.styleFrom(\n    backgroundColor: AppTheme.primary,\n    foregroundColor: Colors.white,\n    minimumSize: const Size.fromHeight(48),\n    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),\n    shape: RoundedRectangleBorder(\n      borderRadius: BorderRadius.circular(AppTheme.radiusMd),\n    ),\n  ),\n  onPressed: () {},\n  child: const Text('Save changes'),\n)"
+    },
+    {
+      "name": "FAB Extended",
+      "kind": "button",
+      "refersTo": "fab-extended",
+      "framework": "flutter",
+      "description": "Primary add action per screen. Always labeled (icon + text), with a tooltip for screen readers.",
+      "code": "FloatingActionButton.extended(\n  onPressed: () {},\n  tooltip: 'Record a new contribution',\n  icon: const Icon(Icons.add),\n  label: const Text('Add Contribution'),\n)"
+    },
+    {
+      "name": "Card Surface",
+      "kind": "card",
+      "refersTo": "card-surface",
+      "framework": "flutter",
+      "description": "Standard list card or section container. Linen surface, 1px Edge border, Card Ambient shadow, radiusLg.",
+      "code": "Container(\n  padding: const EdgeInsets.all(20),\n  decoration: BoxDecoration(\n    color: AppTheme.surface2,\n    borderRadius: BorderRadius.circular(AppTheme.radiusLg),\n    border: Border.all(color: AppTheme.border.withValues(alpha: 0.78)),\n    boxShadow: [\n      BoxShadow(\n        color: AppTheme.primary.withValues(alpha: 0.06),\n        blurRadius: 18,\n        offset: const Offset(0, 10),\n      ),\n    ],\n  ),\n  child: child,\n)"
+    },
+    {
+      "name": "Input Field",
+      "kind": "input",
+      "refersTo": "input-filled",
+      "framework": "flutter",
+      "description": "Filled input. Bone fill, radiusMd, primary border on focus, no glow.",
+      "code": "TextFormField(\n  decoration: InputDecoration(\n    filled: true,\n    fillColor: AppTheme.surface2,\n    border: OutlineInputBorder(\n      borderRadius: BorderRadius.circular(AppTheme.radiusMd),\n      borderSide: BorderSide.none,\n    ),\n    focusedBorder: OutlineInputBorder(\n      borderRadius: BorderRadius.circular(AppTheme.radiusMd),\n      borderSide: const BorderSide(color: AppTheme.primary, width: 1.4),\n    ),\n    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),\n  ),\n)"
+    },
+    {
+      "name": "Alert Dialog",
+      "kind": "modal",
+      "refersTo": "alert-dialog",
+      "framework": "flutter",
+      "description": "Confirmation / form dialog. Paper surface, radiusLg shape. Used for destructive confirmations and inline forms.",
+      "code": "showDialog(\n  context: context,\n  builder: (ctx) => AlertDialog(\n    backgroundColor: AppTheme.bg,\n    shape: RoundedRectangleBorder(\n      borderRadius: BorderRadius.circular(AppTheme.radiusLg),\n    ),\n    title: const Text('Confirm'),\n    content: const Text('Are you sure?'),\n    actions: [...],\n  ),\n)"
+    },
+    {
+      "name": "Status Chip",
+      "kind": "chip",
+      "refersTo": "status-chip",
+      "framework": "flutter",
+      "description": "Pill-shaped status indicator. 10% semantic tint, semantic text, 30% semantic border.",
+      "code": "Container(\n  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),\n  decoration: BoxDecoration(\n    color: AppTheme.success.withValues(alpha: 0.1),\n    borderRadius: BorderRadius.circular(999),\n    border: Border.all(color: AppTheme.success.withValues(alpha: 0.3)),\n  ),\n  child: Text(\n    'PAID',\n    style: TextStyle(\n      color: AppTheme.success,\n      fontSize: 10,\n      fontWeight: FontWeight.w600,\n      letterSpacing: 0.5,\n    ),\n  ),\n)"
+    },
+    {
+      "name": "Empty State",
+      "kind": "custom",
+      "refersTo": "app-empty-state",
+      "framework": "flutter",
+      "description": "AppEmptyState. 80px icon tile in a 10% tint of an accent color, headline, optional body, optional CTA. Centered. Wrapped in a single Semantics block for TalkBack.",
+      "code": "AppEmptyState(\n  icon: Icons.receipt_long_outlined,\n  title: 'No contributions yet',\n  message: 'Record a contribution to start tracking this group\\'s savings.',\n  action: ElevatedButton.icon(\n    onPressed: () {},\n    icon: const Icon(Icons.add),\n    label: const Text('Record first contribution'),\n  ),\n)"
+    },
+    {
+      "name": "Quick Stat Tile",
+      "kind": "custom",
+      "refersTo": "app-quick-stat-tile",
+      "framework": "flutter",
+      "description": "Small icon + value + label card. Used for the dashboard's three Members/Activity/Growth tiles. Announced by TalkBack as 'label, value'.",
+      "code": "AppQuickStatTile(\n  label: 'Members',\n  value: '12',\n  icon: Icons.people_alt_outlined,\n  color: AppTheme.primary,\n)"
+    },
+    {
+      "name": "Action Tile",
+      "kind": "custom",
+      "refersTo": "app-action-tile",
+      "framework": "flutter",
+      "description": "Row tile with icon, title, subtitle, and trailing chevron. Used for navigation entries. Chevron is ExcludeSemantics; whole tile is MergeSemantics for TalkBack.",
+      "code": "AppActionTile(\n  icon: Icons.analytics_outlined,\n  title: 'Reports',\n  subtitle: 'Open insights',\n  color: AppTheme.primary,\n  enabled: true,\n  onTap: () {},\n)"
+    },
+    {
+      "name": "Navigation — Bottom Nav",
+      "kind": "nav",
+      "refersTo": "bottom-nav",
+      "framework": "flutter",
+      "description": "Fixed bottom navigation. 4 destinations. Linen background, primary on selected, Mist on unselected. No labels in icon mode.",
+      "code": "BottomNavigationBar(\n  type: BottomNavigationBarType.fixed,\n  backgroundColor: AppTheme.bg,\n  selectedItemColor: AppTheme.primary,\n  unselectedItemColor: AppTheme.textLight,\n  currentIndex: _index,\n  onTap: (i) => setState(() => _index = i),\n  items: const [...],\n)"
+    }
+  ],
+  "narrative": {
+    "northStar": "The senior accountant's notebook.",
+    "overview": "Clean ruled pages, calm authority, the trust of a ledger that has been right for twenty years. Every pixel in MobiFund is asked the same question a senior accountant would ask an entry: is this earning its line on the page? If the answer is no, the entry is cut. The interface is dense where density serves accuracy (the ledger, the reconciliation table) and spacious where space serves focus (the dashboard's primary balance, the empty states). The system explicitly rejects the template-y SaaS dashboard — the AI-generated reflex of purple gradients, hero-metric templates, identical card grids, and the uppercased eyebrow kicker. The Mobifund teal-and-warm-brass palette is a deliberate counter to that reflex: deep forest teal as the dominant surface, warm brass as the earned accent, soft mint for life, and a near-paper neutral for content. There is no second accent, no tertiary, no purple-to-blue gradient. The visual identity is the restraint, not the palette.",
+    "keyCharacteristics": [
+      "One family throughout. System sans carries display, headlines, body, labels, and data. No display font, no mono for content.",
+      "Calm, not clever. No playful motion, no celebratory microcopy, no confetti. A 60ms stagger on the dashboard's three quick-stat tiles is the loudest motion in the app.",
+      "The balance is the answer. The dashboard's primary job is to answer what is the group at right now in under three seconds.",
+      "Real data, real names, real currency. No placeholder copy anywhere. Member names, not 'John Doe'.",
+      "One source of truth per concept. The same stat renders the same way everywhere. No duplicate counters, no conflicting values across screens."
+    ],
+    "rules": [
+      { "name": "The Brass Is Earned Rule", "body": "Warm Brass appears on ≤ 10% of any given screen. Its rarity is the point.", "section": "colors" },
+      { "name": "The Never-Purple Rule", "body": "No purple. No blue-purple. No gradient between teal and purple. The teal is the teal; the brass is the brass; nothing in between.", "section": "colors" },
+      { "name": "The Edge Is Not Grey Rule", "body": "All borders are Edge (#D9E4DD) tinted with a 0.005-0.015 chroma shift toward teal. Pure grey borders are a tell of unbranded template UI.", "section": "colors" },
+      { "name": "The One-Family Rule", "body": "Display, headline, title, body, caption, and label are all system sans. Adding a display font is a tell of marketing-style thinking in a product surface.", "section": "typography" },
+      { "name": "The No-All-Caps-Body Rule", "body": "All-caps is reserved for short labels (≤ 4 words), status badges, and the LIVE/OFFLINE pill. Never for sentences.", "section": "typography" },
+      { "name": "The Line-Length Rule", "body": "Prose blocks cap at 65-75ch. Data and compact UI can run denser; tables at 120ch+ are fine.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Surfaces are flat at rest. Shadows appear only as a response to state (hover, raised, focus). If a card looks 'lifted' at rest, the shadow is too strong.", "section": "elevation" },
+      { "name": "The Brand-Colored-Shadow Rule", "body": "The only shadow that carries a colored tint is the hero glow, and it is the brand's teal at 16% alpha. Every other shadow is brand-ink at ≤ 6% alpha.", "section": "elevation" },
+      { "name": "The No-Drop-Shadow Rule", "body": "No large blur with high offset and low alpha. That is the 2014 SaaS drop shadow. If it looks like a 2014 app, the shadow is too dark and the blur is too small.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do answer 'what is the group at right now?' within three seconds of opening the dashboard. The balance card is the first focusable element after the FAB.",
+      "Do use real member names, real currency, real dates. No 'John Doe', no '$1,234', no 'Lorem ipsum'.",
+      "Do render the same stat the same way everywhere. The balance is always the same shape, the same font, the same color, in the same hierarchy position.",
+      "Do use skeletons for loading, not spinners in the middle of content.",
+      "Do use a real, focused empty state on every list. 'No contributions yet — record your first one to start tracking.'",
+      "Do include the offline state explicitly. Every screen should render a meaningful state when offline.",
+      "Do read currency as 'KES 1,234' (group separator, no decimal). Always respect locale."
+    ],
+    "donts": [
+      "Don't use the template-y SaaS dashboard. No purple gradients. No hero-metric template. No identical card grids. No '01 / 02 / 03' eyebrows on every section.",
+      "Don't use a display font. System sans throughout. Adding a display font is a tell of marketing-style thinking in a product surface.",
+      "Don't use all-caps for body copy. Reserved for short labels and status badges only.",
+      "Don't animate layout properties (height, width, padding) for state changes. Animate opacity, transform, and a small set of GPU-composited properties.",
+      "Don't use side-stripe colored borders (border-left > 1px) on cards, list items, callouts, or alerts.",
+      "Don't use gradient text. background-clip: text combined with a gradient background is decorative, never meaningful.",
+      "Don't use glassmorphism as a default. Blurs and glass cards are rare and purposeful, or nothing.",
+      "Don't use Warm Brass on more than 10% of any screen. Brass is earned, not decorative.",
+      "Don't use Stripe / Linear / Notion / Revolut visual grammar. Cold, 'tech bro' SaaS.",
+      "Don't gate content visibility on a class-triggered transition. The reveal animation must enhance an already-visible default.",
+      "Don't ship without reduced-motion support. Every animation needs a prefers-reduced-motion: reduce alternative.",
+      "Don't rely on color alone for status. Success/danger must use shape + text + color, never color alone."
+    ]
+  }
+}

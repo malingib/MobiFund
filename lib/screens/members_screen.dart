@@ -202,9 +202,15 @@ class _MembersScreenState extends State<MembersScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppTheme.cardBg,
+                color: AppTheme.surface2,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppTheme.border),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primary.withValues(alpha: 0.04),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Form(
                 key: _formKey,
@@ -337,9 +343,7 @@ class _MembersScreenState extends State<MembersScreen> {
   Widget _memberTile(OrgMember m, double total, int count) {
     return Container(
       padding: const EdgeInsets.fromLTRB(4, 12, 4, 12),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppTheme.border)),
-      ),
+      decoration: const BoxDecoration(),
       child: Row(
         children: [
           MemberAvatar(initials: m.initials, size: 44),
@@ -394,7 +398,7 @@ class _MembersScreenState extends State<MembersScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    border: Border.all(color: AppTheme.danger),
+                    color: AppTheme.danger.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -413,20 +417,9 @@ class _MembersScreenState extends State<MembersScreen> {
     );
   }
 
-  Widget _empty(String msg) => Padding(
-        padding: const EdgeInsets.all(32),
-        child: Center(
-          child: Column(
-            children: [
-              const Icon(Icons.inbox_outlined,
-                  size: 48, color: AppTheme.textLight),
-              const SizedBox(height: 12),
-              Text(
-                msg,
-                style: AppTheme.body.copyWith(color: AppTheme.textSecondary),
-              ),
-            ],
-          ),
-        ),
+  Widget _empty(String msg) => AppEmptyState(
+        icon: Icons.people_outline,
+        title: msg,
+        message: 'Add your first member to start managing this group.',
       );
 }

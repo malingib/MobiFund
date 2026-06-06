@@ -16,28 +16,31 @@ class BottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
       decoration: BoxDecoration(
-        color: AppTheme.bg,
+        color: AppTheme.surface2.withValues(alpha: 0.98),
+        borderRadius: BorderRadius.circular(AppTheme.radiusXl),
+        border: Border.all(color: AppTheme.border.withValues(alpha: 0.82)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
+            color: AppTheme.primary.withValues(alpha: 0.06),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
       child: SafeArea(
+        top: false,
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _navItem(Icons.dashboard_outlined, Icons.dashboard, 0),
-              _navItem(Icons.people_outline, Icons.people, 1),
-              // Center FAB
+              _navItem(Icons.dashboard_outlined, Icons.dashboard, 'Home', 0),
+              _navItem(Icons.people_outline, Icons.people, 'Members', 1),
               _centerFab(),
-              _navItem(Icons.apps_outlined, Icons.apps, 2),
-              _navItem(Icons.settings_outlined, Icons.settings, 3),
+              _navItem(Icons.apps_outlined, Icons.apps, 'Modules', 2),
+              _navItem(Icons.bar_chart_outlined, Icons.bar_chart, 'Reports', 3),
             ],
           ),
         ),
@@ -63,22 +66,23 @@ class BottomNav extends StatelessWidget {
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: AppTheme.primary.withValues(alpha: 0.4),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+              color: AppTheme.primary.withValues(alpha: 0.24),
+              blurRadius: 16,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
         child: const Icon(
           Icons.add,
           color: Colors.white,
-          size: 28,
+          size: 27,
         ),
       ),
     );
   }
 
-  Widget _navItem(IconData inactiveIcon, IconData activeIcon, int idx) {
+  Widget _navItem(
+      IconData inactiveIcon, IconData activeIcon, String label, int idx) {
     final active = idx == currentIndex;
 
     return Expanded(
@@ -87,14 +91,19 @@ class BottomNav extends StatelessWidget {
           AppHaptics.light();
           onTap(idx);
         },
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(20),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: 7),
           decoration: BoxDecoration(
             color: active
-                ? AppTheme.primary.withValues(alpha: 0.1)
+                ? AppTheme.primary.withValues(alpha: 0.08)
                 : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: active
+                  ? AppTheme.primary.withValues(alpha: 0.12)
+                  : Colors.transparent,
+            ),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -102,8 +111,17 @@ class BottomNav extends StatelessWidget {
             children: [
               Icon(
                 active ? activeIcon : inactiveIcon,
-                color: active ? AppTheme.primary : AppTheme.textLight,
-                size: 24,
+                color: active ? AppTheme.primary : AppTheme.textSecondary,
+                size: 22,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  color: active ? AppTheme.primary : AppTheme.textSecondary,
+                  fontSize: 10,
+                  fontWeight: active ? FontWeight.w700 : FontWeight.w600,
+                ),
               ),
             ],
           ),

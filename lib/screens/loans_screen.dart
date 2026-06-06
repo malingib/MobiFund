@@ -160,6 +160,7 @@ class _LoansScreenState extends State<LoansScreen> {
       floatingActionButton: canApply
           ? FloatingActionButton.extended(
               onPressed: () => _showApplyLoanDialog(context),
+              tooltip: 'Apply for a new loan',
               icon: const Icon(Icons.add),
               label: const Text('Apply for Loan'),
             )
@@ -205,21 +206,10 @@ class _LoansScreenState extends State<LoansScreen> {
   }
 
   Widget _emptyState() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.monetization_on_outlined,
-              size: 64, color: AppTheme.textLight),
-          SizedBox(height: 16),
-          Text(
-            'No loans yet',
-            style: TextStyle(
-              color: AppTheme.textSecondary,
-            ),
-          ),
-        ],
-      ),
+    return const AppEmptyState(
+      icon: Icons.monetization_on_outlined,
+      title: 'No loans yet',
+      message: 'When a member applies, the loan will appear here for review.',
     );
   }
 
@@ -230,12 +220,21 @@ class _LoansScreenState extends State<LoansScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.cardBg,
+        color: AppTheme.surface2,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isOverdue ? AppTheme.danger : AppTheme.border,
-          width: isOverdue ? 2 : 1,
+          color: isOverdue
+              ? AppTheme.danger.withValues(alpha: 0.18)
+              : Colors.transparent,
+          width: 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primary.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

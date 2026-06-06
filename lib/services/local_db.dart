@@ -468,32 +468,25 @@ class LocalDb {
 
   static Future<void> _migrateToV6(Database db) async {
     try {
-      await db.execute(
-          'ALTER TABLE organizations ADD COLUMN updated_at TEXT');
+      await db.execute('ALTER TABLE organizations ADD COLUMN updated_at TEXT');
     } catch (_) {}
     try {
-      await db.execute(
-          'ALTER TABLE members ADD COLUMN updated_at TEXT');
+      await db.execute('ALTER TABLE members ADD COLUMN updated_at TEXT');
     } catch (_) {}
     try {
-      await db.execute(
-          'ALTER TABLE contributions ADD COLUMN updated_at TEXT');
+      await db.execute('ALTER TABLE contributions ADD COLUMN updated_at TEXT');
     } catch (_) {}
     try {
-      await db.execute(
-          'ALTER TABLE expenses ADD COLUMN updated_at TEXT');
+      await db.execute('ALTER TABLE expenses ADD COLUMN updated_at TEXT');
     } catch (_) {}
     try {
-      await db.execute(
-          'ALTER TABLE loans ADD COLUMN updated_at TEXT');
+      await db.execute('ALTER TABLE loans ADD COLUMN updated_at TEXT');
     } catch (_) {}
     try {
-      await db.execute(
-          'ALTER TABLE org_members ADD COLUMN updated_at TEXT');
+      await db.execute('ALTER TABLE org_members ADD COLUMN updated_at TEXT');
     } catch (_) {}
     try {
-      await db.execute(
-          'ALTER TABLE org_modules ADD COLUMN updated_at TEXT');
+      await db.execute('ALTER TABLE org_modules ADD COLUMN updated_at TEXT');
     } catch (_) {}
   }
 
@@ -748,7 +741,8 @@ class LocalDb {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  static Future<void> insertContributions(List<Contribution> contributions) async {
+  static Future<void> insertContributions(
+      List<Contribution> contributions) async {
     final d = await db;
     final batch = d.batch();
     for (final c in contributions) {

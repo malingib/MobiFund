@@ -93,9 +93,15 @@ class _PlatformShellState extends State<PlatformShell> {
                   child: Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppTheme.cardBg,
+                      color: AppTheme.surface2,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: AppTheme.border),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.primary.withValues(alpha: 0.04),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Row(
                       children: [
@@ -142,7 +148,8 @@ class _PlatformShellState extends State<PlatformShell> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          orgId.substring(0, orgId.length >= 6 ? 6 : orgId.length),
+                          orgId.substring(
+                              0, orgId.length >= 6 ? 6 : orgId.length),
                           style: const TextStyle(
                             fontSize: 11,
                             color: AppTheme.textLight,
@@ -150,7 +157,8 @@ class _PlatformShellState extends State<PlatformShell> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        const Icon(Icons.chevron_right, color: AppTheme.textLight),
+                        const Icon(Icons.chevron_right,
+                            color: AppTheme.textLight),
                       ],
                     ),
                   ),
@@ -163,4 +171,3 @@ class _PlatformShellState extends State<PlatformShell> {
     );
   }
 }
-

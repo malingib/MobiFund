@@ -33,338 +33,393 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final state = context.watch<AppState>();
     final prefs = context.watch<PreferencesState>();
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Settings Header
-          Text(
-            'Settings',
-            style: AppTheme.headline.copyWith(
-              fontSize: 28,
-              fontWeight: FontWeight.w800,
-              color: AppTheme.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Manage your account and app preferences',
-            style: AppTheme.body.copyWith(
-              color: AppTheme.textSecondary,
-            ),
-          ),
-
-          const SizedBox(height: 24),
-
-          // Account Section
-          _sectionTitle('Account'),
-          const SizedBox(height: 12),
-          SectionCard(
-            title: '',
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Column(
-              children: [
-                _settingsTile(
-                  icon: Icons.person_outline,
-                  iconColor: AppTheme.primary,
-                  title: 'Profile',
-                  subtitle: 'Edit your personal information',
-                  onTap: () => _navigateToProfile(context),
-                ),
-                const Divider(height: 1),
-                _settingsTile(
-                  icon: Icons.apps_outlined,
-                  iconColor: AppTheme.accent,
-                  title: 'Modules',
-                  subtitle: 'Manage activated features',
-                  onTap: () => _navigateToModules(context),
-                ),
-                const Divider(height: 1),
-                _settingsTile(
-                  icon: Icons.security,
-                  iconColor: AppTheme.warning,
-                  title: 'Privacy & Security',
-                  subtitle: 'Password, biometric login',
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const PrivacySecurityScreen(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 24),
-
-          // Billing Section
-          _sectionTitle('Billing'),
-          const SizedBox(height: 12),
-          SectionCard(
-            title: '',
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Column(
-              children: [
-                _settingsTile(
-                  icon: Icons.credit_card,
-                  iconColor: AppTheme.success,
-                  title: 'Plan & Billing',
-                  subtitle: 'Manage your subscription',
-                  trailing: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: AppTheme.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      (state.currentOrg?.tier.name ?? 'Free').toUpperCase(),
-                      style: const TextStyle(
-                          color: AppTheme.primary,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (_) => const BillingTiersScreen()),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 24),
-
-          // App Settings Section
-          _sectionTitle('App Settings'),
-          const SizedBox(height: 12),
-          SectionCard(
-            title: '',
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Column(
-              children: [
-                _settingsTile(
-                  icon: Icons.notifications_outlined,
-                  iconColor: AppTheme.primary,
-                  title: 'Push Notifications',
-                  subtitle: 'Receive alerts for contributions and loans',
-                  trailing: Switch(
-                    value: _notificationsEnabled,
-                    activeThumbColor: AppTheme.primary,
-                    onChanged: (val) async {
-                      setState(() => _notificationsEnabled = val);
-                      if (val) {
-                        await PushNotificationService().registerDeviceToken();
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Notifications Enabled'),
-                                backgroundColor: AppTheme.success),
-                          );
-                        }
-                      } else {
-                        await PushNotificationService().removeDeviceToken();
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Notifications Disabled'),
-                                backgroundColor: AppTheme.textLight),
-                          );
-                        }
-                      }
-                    },
-                  ),
-                ),
-                const Divider(height: 1),
-                _settingsTile(
-                  icon: Icons.palette_outlined,
-                  iconColor: AppTheme.accent,
-                  title: 'Appearance',
-                  subtitle: 'Theme and display settings',
-                  onTap: () => _showThemeDialog(context),
-                ),
-                const Divider(height: 1),
-                _settingsTile(
-                  icon: Icons.language,
-                  iconColor: AppTheme.success,
-                  title: 'Language & Region',
-                  subtitle:
-                      '${prefs.locale.languageCode.toUpperCase()}${prefs.locale.countryCode != null ? ' (${prefs.locale.countryCode})' : ''}',
-                  onTap: () => _showLanguageDialog(context),
-                ),
-                const Divider(height: 1),
-                _settingsTile(
-                  icon: Icons.cloud_sync_outlined,
-                  iconColor: AppTheme.primary,
-                  title: 'Data & Sync',
-                  subtitle: 'Manage cached data and sync settings',
-                  onTap: () => _showStorageDialog(context, state),
-                ),
-                const Divider(height: 1),
-                _settingsTile(
-                  icon: Icons.sms_outlined,
-                  iconColor: AppTheme.success,
-                  title: 'SMS Settings',
-                  subtitle: 'Configure Mobiwave API key & sender ID',
-                  onTap: () => _showSmsSettingsDialog(context),
-                ),
-                if (state.isPlatformAdmin) ...[
-                  const Divider(height: 1),
+    return Container(
+      decoration: const BoxDecoration(gradient: AppTheme.softGradient),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(20, 10, 20, 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Quick toggles — the four tiles a user actually opens
+            // settings to change. No section header: the implicit group
+            // of four is the header.
+            SectionCard(
+              title: '',
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Column(
+                children: [
                   _settingsTile(
-                    icon: Icons.admin_panel_settings_outlined,
-                    iconColor: AppTheme.warning,
-                    title: 'Platform Dashboard',
-                    subtitle: 'Cross-org reporting & support mode',
-                    onTap: () => Navigator.of(context).pushNamed('/platform'),
+                    icon: Icons.notifications_outlined,
+                    title: 'Push notifications',
+                    subtitle: 'Alerts for contributions and loans',
+                    trailing: Switch(
+                      value: _notificationsEnabled,
+                      activeThumbColor: AppTheme.primary,
+                      onChanged: (val) async {
+                        setState(() => _notificationsEnabled = val);
+                        if (val) {
+                          await PushNotificationService().registerDeviceToken();
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Notifications enabled'),
+                                backgroundColor: AppTheme.success,
+                              ),
+                            );
+                          }
+                        } else {
+                          await PushNotificationService().removeDeviceToken();
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Notifications disabled'),
+                                backgroundColor: AppTheme.textLight,
+                              ),
+                            );
+                          }
+                        }
+                      },
+                    ),
                   ),
                   const Divider(height: 1),
                   _settingsTile(
-                    icon: Icons.payment_outlined,
-                    iconColor: AppTheme.warning,
-                    title: 'Super Admin: M-Pesa',
-                    subtitle: 'Configure Daraja credentials (encrypted)',
+                    icon: Icons.palette_outlined,
+                    title: 'Appearance',
+                    subtitle: 'Theme and display settings',
+                    onTap: () => _showThemeDialog(context),
+                  ),
+                  const Divider(height: 1),
+                  _settingsTile(
+                    icon: Icons.language,
+                    title: 'Language & region',
+                    subtitle:
+                        '${prefs.locale.languageCode.toUpperCase()}${prefs.locale.countryCode != null ? ' (${prefs.locale.countryCode})' : ''}',
+                    onTap: () => _showLanguageDialog(context),
+                  ),
+                  const Divider(height: 1),
+                  _settingsTile(
+                    icon: Icons.cloud_sync_outlined,
+                    title: 'Data & sync',
+                    subtitle: 'Manage cached data and sync settings',
+                    onTap: () => _showStorageDialog(context, state),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: AppSpacing.xl),
+
+            // Account Section
+            _sectionTitle('Account'),
+            const SizedBox(height: AppSpacing.md),
+            SectionCard(
+              title: '',
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Column(
+                children: [
+                  _settingsTile(
+                    icon: Icons.person_outline,
+                    title: 'Profile',
+                    subtitle: 'Edit your personal information',
+                    onTap: () => _navigateToProfile(context),
+                  ),
+                  const Divider(height: 1),
+                  _settingsTile(
+                    icon: Icons.apps_outlined,
+                    title: 'Modules',
+                    subtitle: 'Manage activated features',
+                    onTap: () => _navigateToModules(context),
+                  ),
+                  const Divider(height: 1),
+                  _settingsTile(
+                    icon: Icons.security,
+                    title: 'Privacy & Security',
+                    subtitle: 'Password, biometric login',
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (_) => const SuperAdminMpesaScreen(),
+                        builder: (_) => const PrivacySecurityScreen(),
                       ),
                     ),
                   ),
                 ],
-              ],
+              ),
             ),
-          ),
 
-          const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.xl),
 
-          // Support Section
-          _sectionTitle('Support'),
-          const SizedBox(height: 12),
-          SectionCard(
-            title: '',
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Column(
-              children: [
-                _settingsTile(
-                  icon: Icons.help_outline,
-                  iconColor: AppTheme.primary,
-                  title: 'Help Center',
-                  subtitle: 'FAQs and guides',
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const HelpCenterScreen()),
-                  ),
-                ),
-                const Divider(height: 1),
-                _settingsTile(
-                  icon: Icons.chat_outlined,
-                  iconColor: AppTheme.success,
-                  title: 'Contact Us',
-                  subtitle: 'Get in touch',
-                  onTap: () => _showContactDialog(context),
-                ),
-                const Divider(height: 1),
-                _settingsTile(
-                  icon: Icons.bug_report_outlined,
-                  iconColor: AppTheme.warning,
-                  title: 'Report a Bug',
-                  subtitle: 'Help us improve',
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const BugReportScreen()),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 24),
-
-          // About Section
-          _sectionTitle('About'),
-          const SizedBox(height: 12),
-          SectionCard(
-            title: '',
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Column(
-              children: [
-                _settingsTile(
-                  icon: Icons.info_outline,
-                  iconColor: AppTheme.primary,
-                  title: 'About Mobifund',
-                  subtitle: 'Version 1.0.0',
-                  onTap: () => _showAboutDialog(context),
-                ),
-                const Divider(height: 1),
-                _settingsTile(
-                  icon: Icons.description_outlined,
-                  iconColor: AppTheme.success,
-                  title: 'Terms of Service',
-                  subtitle: 'Read our terms',
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const TermsOfServiceScreen(),
+            // Billing Section
+            _sectionTitle('Billing'),
+            const SizedBox(height: 12),
+            SectionCard(
+              title: '',
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Column(
+                children: [
+                  _settingsTile(
+                    icon: Icons.credit_card,
+                    iconColor: AppTheme.success,
+                    title: 'Plan & Billing',
+                    subtitle: 'Manage your subscription',
+                    trailing: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        (state.currentOrg?.tier.name ?? 'Free').toUpperCase(),
+                        style: const TextStyle(
+                            color: AppTheme.primary,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (_) => const BillingTiersScreen()),
                     ),
                   ),
-                ),
-                const Divider(height: 1),
-                _settingsTile(
-                  icon: Icons.privacy_tip_outlined,
-                  iconColor: AppTheme.accent,
-                  title: 'Privacy Policy',
-                  subtitle: 'How we protect your data',
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const PrivacyPolicyScreen(),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // App Settings Section
+            _sectionTitle('App Settings'),
+            const SizedBox(height: 12),
+            SectionCard(
+              title: '',
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Column(
+                children: [
+                  _settingsTile(
+                    icon: Icons.notifications_outlined,
+                    iconColor: AppTheme.primary,
+                    title: 'Push Notifications',
+                    subtitle: 'Receive alerts for contributions and loans',
+                    trailing: Switch(
+                      value: _notificationsEnabled,
+                      activeThumbColor: AppTheme.primary,
+                      onChanged: (val) async {
+                        setState(() => _notificationsEnabled = val);
+                        if (val) {
+                          await PushNotificationService().registerDeviceToken();
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('Notifications Enabled'),
+                                  backgroundColor: AppTheme.success),
+                            );
+                          }
+                        } else {
+                          await PushNotificationService().removeDeviceToken();
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('Notifications Disabled'),
+                                  backgroundColor: AppTheme.textLight),
+                            );
+                          }
+                        }
+                      },
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 32),
-
-          // Logout Button
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: () => _showLogoutDialog(context),
-              icon: const Icon(Icons.logout, color: AppTheme.danger),
-              label: const Text(
-                'Log Out',
-                style: TextStyle(
-                    color: AppTheme.danger, fontWeight: FontWeight.w600),
+                  const Divider(height: 1),
+                  _settingsTile(
+                    icon: Icons.palette_outlined,
+                    iconColor: AppTheme.accent,
+                    title: 'Appearance',
+                    subtitle: 'Theme and display settings',
+                    onTap: () => _showThemeDialog(context),
+                  ),
+                  const Divider(height: 1),
+                  _settingsTile(
+                    icon: Icons.language,
+                    iconColor: AppTheme.success,
+                    title: 'Language & Region',
+                    subtitle:
+                        '${prefs.locale.languageCode.toUpperCase()}${prefs.locale.countryCode != null ? ' (${prefs.locale.countryCode})' : ''}',
+                    onTap: () => _showLanguageDialog(context),
+                  ),
+                  const Divider(height: 1),
+                  _settingsTile(
+                    icon: Icons.cloud_sync_outlined,
+                    iconColor: AppTheme.primary,
+                    title: 'Data & Sync',
+                    subtitle: 'Manage cached data and sync settings',
+                    onTap: () => _showStorageDialog(context, state),
+                  ),
+                  const Divider(height: 1),
+                  _settingsTile(
+                    icon: Icons.sms_outlined,
+                    iconColor: AppTheme.success,
+                    title: 'SMS Settings',
+                    subtitle: 'Configure Mobiwave API key & sender ID',
+                    onTap: () => _showSmsSettingsDialog(context),
+                  ),
+                  if (state.isPlatformAdmin) ...[
+                    const Divider(height: 1),
+                    _settingsTile(
+                      icon: Icons.admin_panel_settings_outlined,
+                      iconColor: AppTheme.warning,
+                      title: 'Platform Dashboard',
+                      subtitle: 'Cross-org reporting & support mode',
+                      onTap: () => Navigator.of(context).pushNamed('/platform'),
+                    ),
+                    const Divider(height: 1),
+                    _settingsTile(
+                      icon: Icons.payment_outlined,
+                      iconColor: AppTheme.warning,
+                      title: 'Super Admin: M-Pesa',
+                      subtitle: 'Configure Daraja credentials (encrypted)',
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const SuperAdminMpesaScreen(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
               ),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppTheme.danger,
-                side: const BorderSide(color: AppTheme.danger),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Support Section
+            _sectionTitle('Support'),
+            const SizedBox(height: 12),
+            SectionCard(
+              title: '',
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Column(
+                children: [
+                  _settingsTile(
+                    icon: Icons.help_outline,
+                    iconColor: AppTheme.primary,
+                    title: 'Help Center',
+                    subtitle: 'FAQs and guides',
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (_) => const HelpCenterScreen()),
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  _settingsTile(
+                    icon: Icons.chat_outlined,
+                    iconColor: AppTheme.success,
+                    title: 'Contact Us',
+                    subtitle: 'Get in touch',
+                    onTap: () => _showContactDialog(context),
+                  ),
+                  const Divider(height: 1),
+                  _settingsTile(
+                    icon: Icons.bug_report_outlined,
+                    iconColor: AppTheme.warning,
+                    title: 'Report a Bug',
+                    subtitle: 'Help us improve',
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (_) => const BugReportScreen()),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // About Section
+            _sectionTitle('About'),
+            const SizedBox(height: 12),
+            SectionCard(
+              title: '',
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Column(
+                children: [
+                  _settingsTile(
+                    icon: Icons.info_outline,
+                    iconColor: AppTheme.primary,
+                    title: 'About Mobifund',
+                    subtitle: 'Version 1.0.0',
+                    onTap: () => _showAboutDialog(context),
+                  ),
+                  const Divider(height: 1),
+                  _settingsTile(
+                    icon: Icons.description_outlined,
+                    iconColor: AppTheme.success,
+                    title: 'Terms of Service',
+                    subtitle: 'Read our terms',
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const TermsOfServiceScreen(),
+                      ),
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  _settingsTile(
+                    icon: Icons.privacy_tip_outlined,
+                    iconColor: AppTheme.accent,
+                    title: 'Privacy Policy',
+                    subtitle: 'How we protect your data',
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const PrivacyPolicyScreen(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: AppSpacing.xxl),
+
+            // Sign out — quiet TextButton, not a screaming-red CTA.
+            // Destructive actions should be discoverable, not loud.
+            SizedBox(
+              width: double.infinity,
+              child: TextButton.icon(
+                onPressed: () => _showLogoutDialog(context),
+                icon: const Icon(Icons.logout, color: AppTheme.danger, size: 18),
+                label: const Text(
+                  'Sign out',
+                  style: TextStyle(
+                    color: AppTheme.danger,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+                style: TextButton.styleFrom(
+                  foregroundColor: AppTheme.danger,
+                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  ),
                 ),
               ),
             ),
-          ),
 
-          const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.sm),
 
-          // Delete Account
-          SizedBox(
-            width: double.infinity,
-            child: TextButton(
-              onPressed: () => _showDeleteAccountDialog(context),
-              child: const Text(
-                'Delete Account',
-                style: TextStyle(
-                  color: AppTheme.textLight,
-                  fontWeight: FontWeight.w500,
+            // Delete Account
+            SizedBox(
+              width: double.infinity,
+              child: TextButton(
+                onPressed: () => _showDeleteAccountDialog(context),
+                child: const Text(
+                  'Delete Account',
+                  style: TextStyle(
+                    color: AppTheme.textLight,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ),
-          ),
 
-          const SizedBox(height: 24),
-        ],
+            const SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }
@@ -383,25 +438,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _settingsTile({
     required IconData icon,
-    required Color iconColor,
-    required String title,
+    String? title,
     String? subtitle,
     Widget? trailing,
     VoidCallback? onTap,
+    // Legacy parameter — kept so existing call sites compile, but the
+    // icon is always rendered in `AppTheme.primary` for visual
+    // consistency (DESIGN.md §6: no rainbow-icon anti-pattern).
+    @Deprecated('Icon color is fixed to AppTheme.primary.') Color? iconColor,
   }) {
+    assert(title != null, '_settingsTile requires a title');
     return ListTile(
       onTap: onTap,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 4),
+      contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
       leading: Container(
-        padding: const EdgeInsets.all(8),
+        width: 36,
+        height: 36,
         decoration: BoxDecoration(
-          color: iconColor.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(10),
+          color: AppTheme.primary.withValues(alpha: 0.10),
+          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
         ),
-        child: Icon(icon, color: iconColor, size: 20),
+        child: Icon(icon, color: AppTheme.primary, size: 20),
       ),
       title: Text(
-        title,
+        title!,
         style: const TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w600,
@@ -441,7 +501,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.bg,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg)),
         title: const Text('Choose Theme'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -504,7 +565,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.bg,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg)),
         title: const Text('Language & Region'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -543,7 +605,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.bg,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg)),
         title: const Text('SMS Settings'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -615,7 +678,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.bg,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg)),
         title: const Text('Data & Sync'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -745,7 +809,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.bg,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg)),
         title: Row(
           children: [
             Container(
@@ -790,7 +855,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.bg,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg)),
         title: Row(
           children: [
             Container(
@@ -856,7 +922,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.bg,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg)),
         title: const Text('Contact Us'),
         content: Column(
           mainAxisSize: MainAxisSize.min,

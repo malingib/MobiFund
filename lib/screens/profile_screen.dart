@@ -117,26 +117,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 280,
+            expandedHeight: 300,
             floating: false,
             pinned: true,
-            backgroundColor: AppTheme.bg,
+            backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
-                padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
+                padding: const EdgeInsets.fromLTRB(20, 72, 20, 20),
                 decoration: const BoxDecoration(
-                  gradient: AppTheme.primaryGradient,
+                  gradient: AppTheme.heroGradient,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Container(
-                      width: 100,
-                      height: 100,
+                      width: 104,
+                      height: 104,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Colors.white.withValues(alpha: 0.12),
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 4),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.14),
+                        ),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.2),
@@ -146,9 +148,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ],
                       ),
                       child: MemberAvatar(
-                        initials: _nameCtrl.text.substring(0, 1).toUpperCase(),
-                        size: 92,
-                        color: AppTheme.primary,
+                        initials: _nameCtrl.text.isNotEmpty
+                            ? _nameCtrl.text.substring(0, 1).toUpperCase()
+                            : '?',
+                        size: 104,
+                        color: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -157,7 +161,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.4,
                       ),
                     ),
                     if (_emailCtrl.text.isNotEmpty) ...[
@@ -170,6 +175,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                     ],
+                    const SizedBox(height: 16),
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      alignment: WrapAlignment.center,
+                      children: const [
+                        _ProfilePill(label: 'Profile'),
+                        _ProfilePill(label: 'Security'),
+                        _ProfilePill(label: 'Preferences'),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -234,9 +250,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: AppTheme.cardBg,
+                      color: AppTheme.surface2,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppTheme.border),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.primary.withValues(alpha: 0.04),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Form(
                       key: _formKey,
@@ -313,9 +335,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 12),
                   Container(
                     decoration: BoxDecoration(
-                      color: AppTheme.cardBg,
+                      color: AppTheme.surface2,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppTheme.border),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.primary.withValues(alpha: 0.04),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Column(
                       children: [
@@ -374,9 +402,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 12),
                   Container(
                     decoration: BoxDecoration(
-                      color: AppTheme.cardBg,
+                      color: AppTheme.surface2,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppTheme.border),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.primary.withValues(alpha: 0.04),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Column(
                       children: [
@@ -534,7 +568,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.bg,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg)),
         title: const Text('Choose Theme'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -599,7 +634,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.bg,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg)),
         title: const Text('Language & Region'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -643,7 +679,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.bg,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg)),
         title: const Text('Change Password'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -694,6 +731,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: const Text('Change'),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ProfilePill extends StatelessWidget {
+  final String label;
+
+  const _ProfilePill({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.14)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: Colors.white.withValues(alpha: 0.92),
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     );
   }
