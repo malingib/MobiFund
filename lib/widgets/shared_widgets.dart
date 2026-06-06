@@ -111,21 +111,23 @@ class SectionCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.fromLTRB(18, 16, 18, 12),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    title,
-                    style: AppTheme.headline,
+          if (title.isNotEmpty) ...[
+            Container(
+              padding: const EdgeInsets.fromLTRB(18, 16, 18, 12),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: AppTheme.headline,
+                    ),
                   ),
-                ),
-                if (trailing != null) trailing!,
-              ],
+                  if (trailing != null) trailing!,
+                ],
+              ),
             ),
-          ),
-          const Divider(height: 1, thickness: 0.6, color: AppTheme.border),
+            const Divider(height: 1, thickness: 0.6, color: AppTheme.border),
+          ],
           Padding(padding: padding, child: child),
         ],
       ),

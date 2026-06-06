@@ -80,57 +80,42 @@ class _ReportCenterScreenState extends State<ReportCenterScreen> {
                 const SizedBox(height: 24),
                 _buildSection(
                   context,
-                  title: 'Financial Statements',
                   reports: [
                     _ReportItem(
                       title: 'Income Statement',
                       description: 'Detailed view of revenues and expenses',
-                      icon: Icons.account_balance_wallet_outlined,
-                      color: AppTheme.primary,
                     ),
                     _ReportItem(
                       title: 'Balance Sheet',
                       description: 'Assets, liabilities, and equity overview',
-                      icon: Icons.pie_chart_outline,
-                      color: AppTheme.info,
                     ),
                   ],
                 ),
                 const SizedBox(height: 24),
                 _buildSection(
                   context,
-                  title: 'Member Reports',
                   reports: [
                     _ReportItem(
                       title: 'Contribution Summary',
                       description: 'Member-wise contribution breakdown',
-                      icon: Icons.people_outline,
-                      color: AppTheme.success,
                     ),
                     _ReportItem(
                       title: 'Loan Performance',
                       description: 'Status and repayment health of all loans',
-                      icon: Icons.trending_up_outlined,
-                      color: AppTheme.warning,
                     ),
                   ],
                 ),
                 const SizedBox(height: 24),
                 _buildSection(
                   context,
-                  title: 'Export Options',
                   reports: [
                     _ReportItem(
                       title: 'PDF Export',
                       description: 'Generate professional PDF reports',
-                      icon: Icons.picture_as_pdf_outlined,
-                      color: AppTheme.danger,
                     ),
                     _ReportItem(
                       title: 'Excel / CSV',
                       description: 'Download raw data for analysis',
-                      icon: Icons.table_chart_outlined,
-                      color: Colors.green,
                     ),
                   ],
                 ),
@@ -195,15 +180,10 @@ class _ReportCenterScreenState extends State<ReportCenterScreen> {
   }
 
   Widget _buildSection(BuildContext context,
-      {required String title, required List<_ReportItem> reports}) {
+      {required List<_ReportItem> reports}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: AppTheme.headline.copyWith(fontSize: 18),
-        ),
-        const SizedBox(height: 12),
         Column(
           children: reports.map((r) => _buildReportTile(context, r)).toList(),
         ),
@@ -227,14 +207,6 @@ class _ReportCenterScreenState extends State<ReportCenterScreen> {
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: report.color.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(report.icon, color: report.color),
-        ),
         title: Text(
           report.title,
           style: AppTheme.body.copyWith(fontWeight: FontWeight.w600),
@@ -254,13 +226,9 @@ class _ReportCenterScreenState extends State<ReportCenterScreen> {
 class _ReportItem {
   final String title;
   final String description;
-  final IconData icon;
-  final Color color;
 
   _ReportItem({
     required this.title,
     required this.description,
-    required this.icon,
-    required this.color,
   });
 }

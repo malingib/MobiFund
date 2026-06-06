@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:fl_chart/fl_chart.dart';
 import '../services/app_state.dart';
 import '../theme/app_theme.dart';
+import '../widgets/app_charts.dart';
 import '../widgets/shared_widgets.dart';
 import '../models/models.dart';
 import '../models/module_models.dart';
@@ -334,7 +334,7 @@ class EnhancedDashboardScreen extends StatelessWidget {
     return Semantics(
       container: true,
       label:
-          'Treasury snapshot. Current balance ${formatKes(balance)} Kenyan Shillings.',
+          'Current balance ${formatKes(balance)} Kenyan Shillings.',
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.xl - 2),
         decoration: BoxDecoration(
@@ -346,60 +346,6 @@ class EnhancedDashboardScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.sm + 2),
-                  decoration: BoxDecoration(
-                    gradient: AppTheme.primaryGradient,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusSm + 2),
-                  ),
-                  child: const Icon(
-                    Icons.account_balance_wallet_outlined,
-                    color: Colors.white,
-                    size: AppIconSize.md - 2,
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.md),
-                const Expanded(
-                  child: Text(
-                    'Treasury snapshot',
-                    style: TextStyle(
-                      color: AppTheme.textSecondary,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                Semantics(
-                  liveRegion: true,
-                  label: 'Live data',
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: const BoxDecoration(
-                          color: AppTheme.success,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.xs + 2),
-                      const Text(
-                        'Live',
-                        style: TextStyle(
-                          color: AppTheme.success,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.sm),
             Text(
               formatKes(balance),
               style: AppTheme.heroBalance,
@@ -490,100 +436,7 @@ class EnhancedDashboardScreen extends StatelessWidget {
   }
 
   Widget _incomeExpenseChart(double income, double expense) {
-    return Semantics(
-      container: true,
-      label:
-          'Income ${formatKes(income)} Kenyan Shillings, Expenses ${formatKes(expense)} Kenyan Shillings.',
-      excludeSemantics: true,
-      child: SizedBox(
-        height: 180,
-        child: BarChart(
-          BarChartData(
-            alignment: BarChartAlignment.spaceAround,
-            maxY: income > expense ? income * 1.2 : expense * 1.2,
-            barTouchData: BarTouchData(
-              enabled: true,
-              touchTooltipData: BarTouchTooltipData(
-                getTooltipColor: (_) => AppTheme.textPrimary,
-                tooltipPadding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-                tooltipMargin: AppSpacing.sm,
-                getTooltipItem: (group, _, rod, __) => BarTooltipItem(
-                  '${group.x == 0 ? 'Income' : 'Expenses'}\n${formatKes(rod.toY)}',
-                  AppTheme.body.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-            titlesData: FlTitlesData(
-              show: true,
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: (value, meta) {
-                    const titles = ['Income', 'Expenses'];
-                    final index = value.toInt();
-                    if (index < 0 || index >= titles.length) {
-                      return const SizedBox();
-                    }
-                    return Padding(
-                      padding: const EdgeInsets.only(top: AppSpacing.sm),
-                      child: Text(titles[index],
-                          style: AppTheme.caption
-                              .copyWith(color: AppTheme.textSecondary)),
-                    );
-                  },
-                ),
-              ),
-              leftTitles:
-                  const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              topTitles:
-                  const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              rightTitles:
-                  const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            ),
-            gridData: const FlGridData(show: false),
-            borderData: FlBorderData(show: false),
-            barGroups: [
-              BarChartGroupData(
-                x: 0,
-                barRods: [
-                  BarChartRodData(
-                    toY: income,
-                    gradient: LinearGradient(colors: [
-                      AppTheme.success,
-                      AppTheme.success.withValues(alpha: 0.7)
-                    ]),
-                    width: 40,
-                    borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(8),
-                        topRight: Radius.circular(8)),
-                  ),
-                ],
-              ),
-              BarChartGroupData(
-                x: 1,
-                barRods: [
-                  BarChartRodData(
-                    toY: expense,
-                    gradient: LinearGradient(colors: [
-                      AppTheme.danger,
-                      AppTheme.danger.withValues(alpha: 0.7)
-                    ]),
-                    width: 40,
-                    borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(8),
-                        topRight: Radius.circular(8)),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    return IncomeExpenseBar(income: income, expense: expense);
   }
 
   Widget _expenseBreakdownChart(Map<String, double> breakdown) {
@@ -595,47 +448,21 @@ class EnhancedDashboardScreen extends StatelessWidget {
       );
     }
 
-    final total = breakdown.values.fold(0.0, (sum, val) => sum + val);
     final entries = breakdown.entries.toList();
-
-    final breakdownLabel = entries
-        .map((e) =>
-            '${e.key} ${(e.value / total * 100).toStringAsFixed(0)} percent')
-        .join(', ');
 
     return Column(
       children: [
-        Semantics(
-          container: true,
-          label: 'Expense breakdown: $breakdownLabel.',
-          excludeSemantics: true,
-          child: SizedBox(
-            height: 160,
-            child: PieChart(
-              PieChartData(
-                sections: entries.map((e) {
-                  final percentage = (e.value / total * 100).clamp(0, 100);
-                  return PieChartSectionData(
-                    value: e.value,
-                    title: '${percentage.toStringAsFixed(0)}%',
-                    color: _getExpenseColor(e.key),
-                    radius: 60,
-                    titleStyle: AppTheme.caption.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  );
-                }).toList(),
-                sectionsSpace: 2,
-                centerSpaceRadius: 40,
-              ),
-            ),
+        Center(
+          child: ExpenseBreakdownPie(
+            breakdown: breakdown,
+            colorFor: _getExpenseColor,
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
         Wrap(
           spacing: AppSpacing.md,
           runSpacing: AppSpacing.sm,
+          alignment: WrapAlignment.center,
           children: entries.map((e) {
             return Row(
               mainAxisSize: MainAxisSize.min,
@@ -895,64 +722,44 @@ class _EmptyNextUp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: AppTheme.primary.withValues(alpha: 0.10),
-            borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-          ),
-          child: const Icon(
-            Icons.event_outlined,
-            color: AppTheme.primary,
-            size: 22,
+        const Text(
+          'No upcoming event',
+          style: TextStyle(
+            color: AppTheme.textPrimary,
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(width: AppSpacing.md),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'No upcoming event',
-                style: TextStyle(
-                  color: AppTheme.textPrimary,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                'Schedule a merry-go-round cycle to track the next payout.',
-                style: AppTheme.body.copyWith(
-                  color: AppTheme.textSecondary,
-                  fontSize: 13,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.sm + 2),
-              TextButton(
-                onPressed: () {
-                  AppHaptics.light();
-                  onActivate();
-                },
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  minimumSize: const Size(0, 32),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  foregroundColor: AppTheme.primary,
-                ),
-                child: const Text(
-                  'Activate MGR',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 13,
-                  ),
-                ),
-              ),
-            ],
+        const SizedBox(height: 2),
+        Text(
+          'Schedule a merry-go-round cycle to track the next payout.',
+          style: AppTheme.body.copyWith(
+            color: AppTheme.textSecondary,
+            fontSize: 13,
+            height: 1.4,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.sm + 2),
+        TextButton(
+          onPressed: () {
+            AppHaptics.light();
+            onActivate();
+          },
+          style: TextButton.styleFrom(
+            padding: EdgeInsets.zero,
+            minimumSize: const Size(0, 32),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            foregroundColor: AppTheme.primary,
+          ),
+          child: const Text(
+            'Activate MGR',
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
+            ),
           ),
         ),
       ],

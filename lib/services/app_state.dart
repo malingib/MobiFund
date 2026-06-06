@@ -110,7 +110,10 @@ class AppState extends ChangeNotifier {
       _supportExpiresAt!.isAfter(DateTime.now());
 
   AppState() {
-    Future.delayed(Duration.zero, () => _init());
+    // Defer init to after first frame so the dashboard skeleton paints
+    // immediately. Without this, the first build blocks on local DB open
+    // (5–40ms) and connectivity probe (50–300ms) before any frame renders.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _init());
   }
 
   Future<void> _init() async {
@@ -118,9 +121,10 @@ class AppState extends ChangeNotifier {
       await _loadOrganizations();
       await _loadPlatformAdminStatus();
       await _listenConnectivity();
-      // If online and authenticated, trigger initial sync
+      // If online and authenticated, trigger initial sync — but only after
+      // the first frame has actually rendered, so we never block startup.
       if (_isOnline && isAuthenticated && _currentOrg != null) {
-        await syncNow();
+        WidgetsBinding.instance.addPostFrameCallback((_) => syncNow());
       }
     } catch (e) {
       debugPrint('Error initializing AppState: $e');

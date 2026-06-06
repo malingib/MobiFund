@@ -87,16 +87,6 @@ class ModulesHubScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppTheme.bg,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: const Text(
-          'Modules',
-          style: TextStyle(
-              color: AppTheme.textPrimary, fontWeight: FontWeight.w700),
-        ),
-      ),
       body: Container(
         decoration: const BoxDecoration(gradient: AppTheme.softGradient),
         child: SingleChildScrollView(
@@ -106,7 +96,7 @@ class ModulesHubScreen extends StatelessWidget {
             children: [
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 22),
                 decoration: BoxDecoration(
                   gradient: AppTheme.heroGradient,
                   borderRadius: BorderRadius.circular(28),
@@ -118,37 +108,14 @@ class ModulesHubScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Modules that feel built-in, not bolted on',
-                      style: AppTheme.displayMedium.copyWith(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Start with the essentials and activate the rest as your group grows.',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.82),
-                        fontSize: 13,
-                        height: 1.35,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Wrap(
-                      spacing: 10,
-                      runSpacing: 10,
-                      children: const [
-                        _ModulePill(label: 'Core first'),
-                        _ModulePill(label: 'Optional add-ons'),
-                        _ModulePill(label: 'Live status'),
-                      ],
-                    ),
-                  ],
+                child: const Text(
+                  'Modules',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 30,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.5,
+                  ),
                 ),
               ),
               const SizedBox(height: 22),
@@ -161,24 +128,12 @@ class ModulesHubScreen extends StatelessWidget {
                   fontSize: 12,
                 ),
               ),
-              const SizedBox(height: 12),
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: 0.86,
-                ),
-                itemCount: modules.where((m) => m['isCore'] == true).length,
-                itemBuilder: (ctx, i) {
-                  final coreModules =
-                      modules.where((m) => m['isCore'] == true).toList();
-                  return _moduleCard(context, coreModules[i], state);
-                },
+              const SizedBox(height: 10),
+              _ModuleGrid(
+                modules: modules.where((m) => m['isCore'] == true).toList(),
+                buildCard: (m) => _moduleCard(context, m, state),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 22),
               Text(
                 'Optional Modules',
                 style: AppTheme.caption.copyWith(
@@ -188,22 +143,10 @@ class ModulesHubScreen extends StatelessWidget {
                   fontSize: 12,
                 ),
               ),
-              const SizedBox(height: 12),
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: 0.86,
-                ),
-                itemCount: modules.where((m) => m['isCore'] != true).length,
-                itemBuilder: (ctx, i) {
-                  final optionalModules =
-                      modules.where((m) => m['isCore'] != true).toList();
-                  return _moduleCard(context, optionalModules[i], state);
-                },
+              const SizedBox(height: 10),
+              _ModuleGrid(
+                modules: modules.where((m) => m['isCore'] != true).toList(),
+                buildCard: (m) => _moduleCard(context, m, state),
               ),
             ],
           ),
@@ -220,7 +163,7 @@ class ModulesHubScreen extends StatelessWidget {
 
     return Material(
       color: Colors.transparent,
-      borderRadius: BorderRadius.circular(22),
+      borderRadius: BorderRadius.circular(18),
       child: InkWell(
         onTap: isActive
             ? () {
@@ -242,92 +185,80 @@ class ModulesHubScreen extends StatelessWidget {
                 }
               }
             : null,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(18),
         child: Container(
-          padding: const EdgeInsets.all(18),
+          padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(22),
+            borderRadius: BorderRadius.circular(18),
             border: Border.all(
               color: isActive ? (module['color'] as Color) : AppTheme.border,
-              width: isActive ? 1.8 : 1,
+              width: isActive ? 1.4 : 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: (module['color'] as Color).withValues(alpha: 0.08),
-                blurRadius: 16,
-                offset: const Offset(0, 8),
+                color: (module['color'] as Color).withValues(alpha: 0.06),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: (module['color'] as Color).withValues(alpha: 0.10),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Icon(
-                  module['icon'] as IconData,
-                  color: module['color'] as Color,
-                  size: 28,
-                ),
-              ),
-              const SizedBox(height: 14),
               Text(
                 module['title'] as String,
-                style: TextStyle(
-                  fontSize: 15,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 13.5,
                   fontWeight: FontWeight.w800,
                   color: AppTheme.textPrimary,
+                  height: 1.15,
                 ),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 2),
               Text(
                 module['description'] as String,
-                maxLines: 3,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: isActive
-                      ? AppTheme.textSecondary
-                      : AppTheme.textSecondary,
-                  height: 1.35,
+                style: const TextStyle(
+                  fontSize: 10.5,
+                  color: AppTheme.textSecondary,
+                  height: 1.3,
                 ),
               ),
-              const Spacer(),
               if (!isActive) ...[
-                const SizedBox(height: 12),
+                const SizedBox(height: 6),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                   decoration: BoxDecoration(
                     color: AppTheme.textLight.withValues(alpha: 0.10),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(6),
                   ),
                   child: const Text(
                     'Inactive',
                     style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 9,
                         color: AppTheme.textLight,
                         fontWeight: FontWeight.w600),
                   ),
                 ),
               ] else if (isCore) ...[
-                const SizedBox(height: 12),
+                const SizedBox(height: 6),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                   decoration: BoxDecoration(
                     color: AppTheme.success.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(6),
                   ),
                   child: const Text(
                     'Core',
                     style: TextStyle(
-                      fontSize: 10,
+                      fontSize: 9,
                       color: AppTheme.success,
                       fontWeight: FontWeight.w700,
                     ),
@@ -342,28 +273,40 @@ class ModulesHubScreen extends StatelessWidget {
   }
 }
 
-class _ModulePill extends StatelessWidget {
-  final String label;
+/// Compact grid of module tiles. Three across on phones, four on wider
+/// surfaces. The aspect ratio is intentionally short — the tile content
+/// is title + 2-line description + tiny badge, and a square would leave
+/// dead space below the badge. Layout is dictated by content, not the grid.
+class _ModuleGrid extends StatelessWidget {
+  final List<Map<String, dynamic>> modules;
+  final Widget Function(Map<String, dynamic>) buildCard;
 
-  const _ModulePill({required this.label});
+  const _ModuleGrid({required this.modules, required this.buildCard});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.14)),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: Colors.white.withValues(alpha: 0.92),
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final w = constraints.maxWidth;
+        final crossAxisCount = w >= 520 ? 4 : 3;
+        const spacing = 10.0;
+        final tileWidth =
+            (w - spacing * (crossAxisCount - 1)) / crossAxisCount;
+        // Short tiles — content is ~3 stacked lines + tiny badge.
+        final tileHeight = tileWidth * 0.95;
+
+        return Wrap(
+          spacing: spacing,
+          runSpacing: spacing,
+          children: modules
+              .map((m) => SizedBox(
+                    width: tileWidth,
+                    height: tileHeight,
+                    child: buildCard(m),
+                  ))
+              .toList(),
+        );
+      },
     );
   }
 }

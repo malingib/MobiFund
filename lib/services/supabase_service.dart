@@ -19,19 +19,41 @@ class SupabaseService {
   factory SupabaseService() => _instance;
   SupabaseService._internal();
 
+  // Resolve env in priority order:
+  //   1. Compile-time --dart-define (zero runtime cost, baked into AOT)
+  //   2. Process env var (set at OS level, useful for CI)
+  //   3. flutter_dotenv .env file (dev convenience, lazy-loaded)
+  //
+  // Compile-time dart-define avoids the dotenv runtime parse entirely
+  // when the app is built with `--dart-define=SUPABASE_URL=...`.
+
   // ⚠️  IMPORTANT: Load credentials from environment variables
   // The .env file must be kept secure and NEVER committed to version control
-  static String get supabaseUrl =>
-      dotenv.env['SUPABASE_URL'] ?? 'https://ttwubbbbmdwmnkavrqtl.supabase.co';
+  static String get supabaseUrl {
+    const fromDartDefine = String.fromEnvironment('SUPABASE_URL');
+    if (fromDartDefine.isNotEmpty) return fromDartDefine;
+    // dotenv may not be loaded yet on first access (lazy). Read via the
+    // map directly; .env is parsed synchronously into memory after load().
+    final fromDotenv = dotenv.env['SUPABASE_URL'];
+    if (fromDotenv != null && fromDotenv.isNotEmpty) return fromDotenv;
+    return 'https://ttwubbbbmdwmnkavrqtl.supabase.co';
+  }
 
-  static String get supabaseAnonKey =>
-      dotenv.env['SUPABASE_ANON_KEY'] ??
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0d3ViYmJibWR3bW5rYXZycXRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MjYyNzQsImV4cCI6MjA4OTAwMjI3NH0.1DfYcbNpRMFdO_J8SSwjRAt_kl5IvOKjZCZ7v1vsM8A';
+  static String get supabaseAnonKey {
+    const fromDartDefine = String.fromEnvironment('SUPABASE_ANON_KEY');
+    if (fromDartDefine.isNotEmpty) return fromDartDefine;
+    final fromDotenv = dotenv.env['SUPABASE_ANON_KEY'];
+    if (fromDotenv != null && fromDotenv.isNotEmpty) return fromDotenv;
+    return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0d3ViYmJibWR3bW5rYXZycXRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MjYyNzQsImV4cCI6MjA4OTAwMjI3NH0.1DfYcbNpRMFdO_J8SSwjRAt_kl5IvOKjZCZ7v1vsM8A';
+  }
 
   // ⚠️  WARNING: Service role key should ONLY be used in Edge Functions
   // Never expose this in client-side code in production
-  static String get serviceRoleKey =>
-      dotenv.env['SUPABASE_SERVICE_ROLE_KEY'] ?? '';
+  static String get serviceRoleKey {
+    const fromDartDefine = String.fromEnvironment('SUPABASE_SERVICE_ROLE_KEY');
+    if (fromDartDefine.isNotEmpty) return fromDartDefine;
+    return dotenv.env['SUPABASE_SERVICE_ROLE_KEY'] ?? '';
+  }
 
   SupabaseClient? _client;
 

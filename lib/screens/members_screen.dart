@@ -124,7 +124,6 @@ class _MembersScreenState extends State<MembersScreen> {
                 child: _statCard(
                   'Total Members',
                   '${state.members.length}',
-                  Icons.people,
                   AppTheme.primary,
                 ),
               ),
@@ -133,7 +132,6 @@ class _MembersScreenState extends State<MembersScreen> {
                 child: _statCard(
                   'Active',
                   '${state.members.where((m) => state.getMemberTotal(m.id) > 0).length}',
-                  Icons.check_circle,
                   AppTheme.success,
                 ),
               ),
@@ -145,7 +143,7 @@ class _MembersScreenState extends State<MembersScreen> {
           // Add member button or form
           if (!_showForm)
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
               decoration: BoxDecoration(
                 gradient: AppTheme.primaryGradient,
                 borderRadius: BorderRadius.circular(20),
@@ -159,9 +157,6 @@ class _MembersScreenState extends State<MembersScreen> {
               ),
               child: Column(
                 children: [
-                  const Icon(Icons.person_add_outlined,
-                      color: Colors.white, size: 48),
-                  const SizedBox(height: 16),
                   const Text(
                     'Add New Member',
                     style: TextStyle(
@@ -299,30 +294,22 @@ class _MembersScreenState extends State<MembersScreen> {
     );
   }
 
-  Widget _statCard(String label, String value, IconData icon, Color color) {
+  Widget _statCard(String label, String value, Color color) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withValues(alpha: 0.2)),
+        color: AppTheme.surface2,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.fromBorderSide(AppTheme.cardBorder),
+        boxShadow: AppTheme.shadowCard,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icon, color: Colors.white, size: 18),
-          ),
-          const SizedBox(height: 12),
           Text(
             value,
-            style: const TextStyle(
-              color: AppTheme.textPrimary,
+            style: TextStyle(
+              color: color,
               fontSize: 24,
               fontWeight: FontWeight.w700,
             ),

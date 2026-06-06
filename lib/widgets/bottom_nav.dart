@@ -16,25 +16,16 @@ class BottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-      decoration: BoxDecoration(
-        color: AppTheme.surface2.withValues(alpha: 0.98),
-        borderRadius: BorderRadius.circular(AppTheme.radiusXl),
-        border: Border.all(color: AppTheme.border.withValues(alpha: 0.82)),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.primary.withValues(alpha: 0.06),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
+      decoration: const BoxDecoration(
+        color: AppTheme.surface2,
+        border: Border(top: BorderSide(color: AppTheme.border, width: 0.6)),
       ),
       child: SafeArea(
         top: false,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+        child: SizedBox(
+          height: 64,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _navItem(Icons.dashboard_outlined, Icons.dashboard, 'Home', 0),
               _navItem(Icons.people_outline, Icons.people, 'Members', 1),
@@ -93,28 +84,26 @@ class BottomNav extends StatelessWidget {
         },
         borderRadius: BorderRadius.circular(20),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 7),
-          decoration: BoxDecoration(
-            color: active
-                ? AppTheme.primary.withValues(alpha: 0.08)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: active
-                  ? AppTheme.primary.withValues(alpha: 0.12)
-                  : Colors.transparent,
-            ),
-          ),
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                active ? activeIcon : inactiveIcon,
-                color: active ? AppTheme.primary : AppTheme.textSecondary,
-                size: 22,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                decoration: BoxDecoration(
+                  color: active
+                      ? AppTheme.primary.withValues(alpha: 0.08)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                ),
+                child: Icon(
+                  active ? activeIcon : inactiveIcon,
+                  color: active ? AppTheme.primary : AppTheme.textSecondary,
+                  size: 22,
+                ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 2),
               Text(
                 label,
                 style: TextStyle(

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'models/models.dart';
-import 'screens/about_screen.dart';
 import 'screens/enhanced_dashboard_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/members_screen.dart';
-import 'screens/module_management_screen.dart';
 import 'screens/modules_hub_screen.dart';
 import 'screens/platform/platform_shell.dart';
+import 'screens/profile_screen.dart';
 import 'screens/register_screen.dart';
+import 'screens/report_center_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/welcome_screen.dart';
@@ -21,6 +21,7 @@ import 'services/preferences_state.dart';
 import 'services/supabase_service.dart';
 import 'theme/app_theme.dart';
 import 'widgets/bottom_nav.dart';
+import 'widgets/notifications_panel.dart';
 import 'widgets/org_switcher.dart';
 
 Future<void> main() async {
@@ -52,38 +53,40 @@ Future<void> main() async {
 }
 
 Future<BootstrapResult> _bootstrapApp(PreferencesState prefsState) async {
-  try {
-    try {
-      await dotenv.load(fileName: '.env');
-    } catch (e) {
-      debugPrint(
-          'Note: .env file not found, using default/supabase credentials');
-    }
+  // Run env loading + supabase init + prefs load in parallel — they are
+  // independent. Total wall-clock is now ~max(initA, initB, initC) instead
+  // of initA + initB + initC.
+  final results = await Future.wait<dynamic>([
+    _loadEnv(),
+    prefsState.load(),
+  ], eagerError: false);
 
+  try {
     await Supabase.initialize(
       url: SupabaseService.supabaseUrl,
       anonKey: SupabaseService.supabaseAnonKey,
     );
-
-    await prefsState.load();
-
-    return BootstrapResult(
-      isAuthenticated: Supabase.instance.client.auth.currentUser != null,
-      initialRoute: Supabase.instance.client.auth.currentUser != null
-          ? '/home'
-          : '/login',
-    );
   } catch (e) {
-    debugPrint('Bootstrap error: $e');
-    try {
-      await prefsState.load();
-    } catch (_) {
-      // Keep defaults if preferences fail to load.
-    }
-    return const BootstrapResult(
-      isAuthenticated: false,
-      initialRoute: '/login',
-    );
+    debugPrint('Supabase init failed: $e');
+  }
+
+  // Suppress unused-var warning from the eagerError result list.
+  assert(results.length == 2);
+
+  return BootstrapResult(
+    isAuthenticated: Supabase.instance.client.auth.currentUser != null,
+    initialRoute: Supabase.instance.client.auth.currentUser != null
+        ? '/home'
+        : '/login',
+  );
+}
+
+Future<void> _loadEnv() async {
+  try {
+    await dotenv.load(fileName: '.env');
+  } catch (_) {
+    // .env missing is fine — credentials may come from --dart-define.
+    // SupabaseService reads dart-define first, then dotenv, then defaults.
   }
 }
 
@@ -113,16 +116,18 @@ class BootstrapApp extends StatefulWidget {
 
 class _BootstrapAppState extends State<BootstrapApp> {
   bool _ready = false;
-  bool _minSplashElapsed = false;
+  // 4s hard cap on splash — only kicks in when something actually hangs.
+  // No more artificial 1.8s floor for fast/no-network launches.
+  bool _safetyTimeout = false;
   String _initialRoute = '/login';
 
   @override
   void initState() {
     super.initState();
-    Future<void>.delayed(const Duration(milliseconds: 1800)).then((_) {
-      if (!mounted) return;
+    Future<void>.delayed(const Duration(milliseconds: 4000)).then((_) {
+      if (!mounted || _ready) return;
       setState(() {
-        _minSplashElapsed = true;
+        _safetyTimeout = true;
       });
     });
     widget.bootstrapFuture.then((result) {
@@ -147,7 +152,7 @@ class _BootstrapAppState extends State<BootstrapApp> {
         theme: AppTheme.theme,
         darkTheme: AppTheme.darkTheme,
         home: BootstrapGate(
-          isReady: _ready && _minSplashElapsed,
+          isReady: _ready || _safetyTimeout,
           initialRoute: _initialRoute,
         ),
         routes: {
@@ -251,14 +256,14 @@ class _MainShellState extends State<MainShell> {
     EnhancedDashboardScreen(),
     MembersScreen(),
     ModulesHubScreen(),
-    SettingsScreen(),
+    ReportCenterScreen(),
   ];
 
   final List<String> _titles = [
     'Dashboard',
     'Members',
     'Modules',
-    'Settings',
+    'Reports',
   ];
 
   void _onItemTapped(int index) {
@@ -317,7 +322,7 @@ class _MainShellState extends State<MainShell> {
                             Icons.person_add_outlined,
                             'Add Member',
                             AppTheme.primary,
-                            1,
+                            tabIndex: 1,
                           ),
                         ),
                         SizedBox(
@@ -327,7 +332,7 @@ class _MainShellState extends State<MainShell> {
                             Icons.add_circle_outline,
                             'Contributions',
                             AppTheme.success,
-                            2,
+                            tabIndex: 2,
                           ),
                         ),
                         SizedBox(
@@ -337,7 +342,7 @@ class _MainShellState extends State<MainShell> {
                             Icons.remove_circle_outline,
                             'Expenses',
                             AppTheme.danger,
-                            2,
+                            tabIndex: 2,
                           ),
                         ),
                         SizedBox(
@@ -347,7 +352,7 @@ class _MainShellState extends State<MainShell> {
                             Icons.person_outline,
                             'Profile',
                             AppTheme.accent,
-                            3,
+                            onPush: (_) => const ProfileScreen(),
                           ),
                         ),
                         SizedBox(
@@ -357,7 +362,7 @@ class _MainShellState extends State<MainShell> {
                             Icons.analytics_outlined,
                             'Reports',
                             AppTheme.primary,
-                            0,
+                            tabIndex: 3,
                           ),
                         ),
                         SizedBox(
@@ -367,7 +372,7 @@ class _MainShellState extends State<MainShell> {
                             Icons.settings_outlined,
                             'Settings',
                             AppTheme.info,
-                            3,
+                            onPush: (_) => const SettingsScreen(),
                           ),
                         ),
                       ],
@@ -387,14 +392,21 @@ class _MainShellState extends State<MainShell> {
     BuildContext ctx,
     IconData icon,
     String label,
-    Color color,
-    int tabIndex,
-  ) {
+    Color color, {
+    int? tabIndex,
+    WidgetBuilder? onPush,
+  }) {
     return InkWell(
       onTap: () {
         AppHaptics.selection();
         Navigator.pop(ctx);
-        setState(() => _currentIndex = tabIndex);
+        if (onPush != null) {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: onPush),
+          );
+        } else if (tabIndex != null) {
+          setState(() => _currentIndex = tabIndex);
+        }
       },
       borderRadius: BorderRadius.circular(16),
       child: Container(
@@ -451,94 +463,34 @@ class _MainShellState extends State<MainShell> {
           ),
         ),
         actions: [
-          if (state.hasPermission(UserRole.admin))
-            IconButton(
-              icon:
-                  const Icon(Icons.apps_outlined, color: AppTheme.textPrimary),
-              onPressed: () {
-                AppHaptics.selection();
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (_) => const ModuleManagementScreen()),
-                );
-              },
-              tooltip: 'Modules',
-            ),
-          Container(
-            margin: const EdgeInsets.only(right: 8),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: state.isOnline
-                  ? AppTheme.success.withValues(alpha: 0.1)
-                  : AppTheme.danger.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: state.isOnline
-                    ? AppTheme.success.withValues(alpha: 0.3)
-                    : AppTheme.danger.withValues(alpha: 0.3),
+          Tooltip(
+            message: state.isOnline ? 'Online' : 'Offline',
+            child: Container(
+              width: 10,
+              height: 10,
+              margin: const EdgeInsets.symmetric(horizontal: 8),
+              decoration: BoxDecoration(
+                color: state.isOnline ? AppTheme.success : AppTheme.danger,
+                shape: BoxShape.circle,
               ),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: state.isOnline ? AppTheme.success : AppTheme.danger,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  state.isOnline ? 'Online' : 'Offline',
-                  style: AppTheme.caption.copyWith(
-                    color: state.isOnline ? AppTheme.success : AppTheme.danger,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
           ),
-          if (state.isOnline)
-            IconButton(
-              icon: state.isSyncing
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        color: AppTheme.primary,
-                        strokeWidth: 2.5,
-                      ),
-                    )
-                  : const Icon(Icons.sync, color: AppTheme.primary),
-              onPressed: state.isSyncing
-                  ? null
-                  : () {
-                      AppHaptics.selection();
-                      state.syncNow();
-                    },
-              tooltip: 'Sync',
-            ),
-          IconButton(
-            icon: const Icon(Icons.info_outline, color: AppTheme.textPrimary),
-            onPressed: () {
-              AppHaptics.selection();
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const AboutScreen()),
-              );
-            },
-            tooltip: 'About',
-          ),
-          if (state.isInSupportMode)
-            IconButton(
-              icon: const Icon(Icons.exit_to_app, color: AppTheme.warning),
-              tooltip: 'Exit support mode (local)',
+          NotificationsBadge(
+            child: IconButton(
+              icon: const Icon(Icons.notifications_none_outlined,
+                  color: AppTheme.textPrimary),
               onPressed: () {
                 AppHaptics.selection();
-                state.exitSupportMode();
+                showNotificationsSheet(context);
               },
+              tooltip: 'Notifications',
             ),
+          ),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+            child: _ProfileAvatarMenu(),
+          ),
+          const SizedBox(width: 4),
         ],
       ),
       body: Column(
@@ -582,6 +534,189 @@ class _MainShellState extends State<MainShell> {
         currentIndex: _currentIndex,
         onTap: _onItemTapped,
         onCenterTap: _onCenterTap,
+      ),
+    );
+  }
+}
+
+class _ProfileAvatarMenu extends StatelessWidget {
+  const _ProfileAvatarMenu();
+
+  String get _seed {
+    final email = Supabase.instance.client.auth.currentUser?.email;
+    if (email == null || email.isEmpty) return 'mobifund';
+    return email;
+  }
+
+  String get _avatarUrl =>
+      'https://api.dicebear.com/9.x/avataaars/svg?seed=${Uri.encodeComponent(_seed)}';
+
+  void _openProfile(BuildContext context) {
+    AppHaptics.selection();
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const ProfileScreen()),
+    );
+  }
+
+  void _openSettings(BuildContext context) {
+    AppHaptics.selection();
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => Scaffold(
+          backgroundColor: AppTheme.bg,
+          appBar: AppBar(
+            title: const Text('Settings'),
+            backgroundColor: AppTheme.bg,
+            elevation: 0,
+          ),
+          body: const SettingsScreen(),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _confirmLogout(BuildContext context) async {
+    AppHaptics.selection();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Log out of Mobifund?'),
+        content: const Text(
+          "You'll need to sign in again to access your group.",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(foregroundColor: AppTheme.danger),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Log out'),
+          ),
+        ],
+      ),
+    );
+
+    if (!context.mounted) return;
+    if (confirmed != true) return;
+
+    await SupabaseService().signOut();
+    if (!context.mounted) return;
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil('/login', (route) => false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: 'Account',
+      child: PopupMenuButton<_ProfileMenuAction>(
+        tooltip: '',
+        offset: const Offset(0, 48),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        ),
+        color: AppTheme.surface,
+        onSelected: (action) {
+          switch (action) {
+            case _ProfileMenuAction.profile:
+              _openProfile(context);
+              break;
+            case _ProfileMenuAction.settings:
+              _openSettings(context);
+              break;
+            case _ProfileMenuAction.logout:
+              _confirmLogout(context);
+              break;
+          }
+        },
+        itemBuilder: (context) => [
+          PopupMenuItem<_ProfileMenuAction>(
+            value: _ProfileMenuAction.profile,
+            child: Row(
+              children: const [
+                Icon(Icons.person_outline, color: AppTheme.textPrimary),
+                SizedBox(width: 12),
+                Text('Profile'),
+              ],
+            ),
+          ),
+          PopupMenuItem<_ProfileMenuAction>(
+            value: _ProfileMenuAction.settings,
+            child: Row(
+              children: const [
+                Icon(Icons.settings_outlined, color: AppTheme.textPrimary),
+                SizedBox(width: 12),
+                Text('Settings'),
+              ],
+            ),
+          ),
+          PopupMenuItem<_ProfileMenuAction>(
+            value: _ProfileMenuAction.logout,
+            child: Row(
+              children: const [
+                Icon(Icons.logout, color: AppTheme.danger),
+                SizedBox(width: 12),
+                Text(
+                  'Log out',
+                  style: TextStyle(color: AppTheme.danger),
+                ),
+              ],
+            ),
+          ),
+        ],
+        child: _ProfileAvatar(url: _avatarUrl),
+      ),
+    );
+  }
+}
+
+enum _ProfileMenuAction { profile, settings, logout }
+
+class _ProfileAvatar extends StatelessWidget {
+  final String url;
+
+  const _ProfileAvatar({required this.url});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 36,
+      height: 36,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: AppTheme.border, width: 1),
+      ),
+      child: ClipOval(
+        child: SvgPicture.network(
+          url,
+          width: 36,
+          height: 36,
+          fit: BoxFit.cover,
+          placeholderBuilder: (_) => const _AvatarPlaceholder(),
+          errorBuilder: (_, __, ___) => const _AvatarPlaceholder(),
+        ),
+      ),
+    );
+  }
+}
+
+class _AvatarPlaceholder extends StatelessWidget {
+  const _AvatarPlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: AppTheme.primaryGradient,
+      ),
+      alignment: Alignment.center,
+      child: const Icon(
+        Icons.person_outline,
+        color: Colors.white,
+        size: 20,
       ),
     );
   }
